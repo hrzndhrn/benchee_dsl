@@ -30,13 +30,16 @@ defmodule BencheeDsl.Benchmark do
 
   defmacro inputs(do: inputs) do
     quote do
-      Server.register(:inputs, __MODULE__, unquote(inputs))
+      # Server.register(:inputs, __MODULE__, fn -> unquote(inputs) end)
+      # Server.register(:inputs, __MODULE__, unquote(inputs))
+      def inputs, do: unquote(inputs)
     end
   end
 
   defmacro inputs(inputs) do
     quote do
-      Server.register(:inputs, __MODULE__, unquote(inputs))
+      # Server.register(:inputs, __MODULE__, unquote(inputs))
+      def inputs, do: unquote(inputs)
     end
   end
 

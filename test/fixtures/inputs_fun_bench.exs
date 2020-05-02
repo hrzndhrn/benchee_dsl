@@ -2,9 +2,9 @@ defmodule InputsFunBench do
   use BencheeDsl.Benchmark
 
   inputs do
-    small = Enum.to_list(1..1_000)
-    medium = Enum.to_list(1..10_000)
-    bigger = Enum.to_list(1..100_000)
+    small = data(1..1_000)
+    medium = data(1..10_000)
+    bigger = data(1..100_000)
 
     %{
       "Small" => small,
@@ -22,4 +22,6 @@ defmodule InputsFunBench do
   job map_flatten(input) do
     input |> Enum.map(&map_fun/1) |> List.flatten()
   end
+
+  defp data(range), do: Enum.to_list(range)
 end

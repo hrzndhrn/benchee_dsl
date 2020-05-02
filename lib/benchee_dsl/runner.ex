@@ -8,7 +8,7 @@ defmodule BencheeDsl.Runner do
 
     %{config: config} =
       opts
-      |> config(config)
+      |> config(config, module)
       |> benchmark(module)
       |> before_each_benchmark(dsl_config)
 
@@ -17,10 +17,10 @@ defmodule BencheeDsl.Runner do
     Application.get_env(:benchee_dsl, :benchee).run(jobs, config)
   end
 
-  defp config(opts, config) do
+  defp config(opts, config, module) do
     config
     |> Keyword.merge(Map.get(opts, :config, []))
-    |> inputs(Map.get(opts, :inputs))
+    |> inputs(module)
     |> formatters(Map.get(opts, :formatters, []))
   end
 
@@ -31,9 +31,12 @@ defmodule BencheeDsl.Runner do
     end
   end
 
-  defp inputs(config, nil), do: config
-
-  defp inputs(config, inputs), do: Keyword.put(config, :inputs, inputs)
+  defp inputs(config, module) do
+    case function_exported?(module, :inputs, 0) do
+      true -> Keyword.put(config, :inputs, module.inputs())
+      false -> config
+    end
+  end
 
   defp formatters(config, []), do: config
 
