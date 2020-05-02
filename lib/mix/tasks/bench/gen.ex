@@ -31,7 +31,6 @@ defmodule Mix.Tasks.Bench.Gen do
       input |> Enum.map(&map_fun/1) |> List.flatten()
     end
 
-
     def map_fun(i), do: [i, i * i]
   end
   """
