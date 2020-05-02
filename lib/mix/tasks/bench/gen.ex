@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.Bench.Gen do
+  @moduledoc "Generates basic benchmark structure."
+
   use Mix.Task
 
   import Mix.Shell.IO, only: [info: 1]

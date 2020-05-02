@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.Bench do
+  @moduledoc "Start and runs the benchmarks."
+
   use Mix.Task
 
   @shortdoc "Start and runs the benchmarks"

@@ -4,6 +4,8 @@
     "minimum_coverage": 90
   },
   "skip_files": [
-    "lib/benchee_dsl/benchee.ex"
+    "lib/benchee_dsl/benchee.ex",
+    "lib/mix/tasks/bench.ex",
+    "lib/mix/tasks/bench/gen.ex"
   ]
 }
