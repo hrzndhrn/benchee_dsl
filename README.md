@@ -14,7 +14,7 @@ try anywho:
 def deps do
   [
     {:benchee, "~> 1.0.0", only: :dev},
-    {:benchee_dsl, git: "https://github.com/hrzndhrn/benchee_dsl"}
+    {:benchee_dsl, git: "https://github.com/hrzndhrn/benchee_dsl", only: :dev}
   ]
 end
 ```
