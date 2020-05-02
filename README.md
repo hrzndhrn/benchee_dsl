@@ -1,7 +1,7 @@
 # BencheeDsl
 
 `BencheDsl` provides a DSL to write benchmarks for
-[`Benchee`](https://github.com/bencheeorg/benchee)
+[`Benchee`](https://github.com/bencheeorg/benchee).
 
 For now, just an early alpha version.
 
@@ -14,7 +14,7 @@ try anywho:
 def deps do
   [
     {:benchee, "~> 1.0.0", only: :dev},
-    {:benchee_dsl, git: https://github.com/hrzndhrn/benchee_dsl}
+    {:benchee_dsl, git: "https://github.com/hrzndhrn/benchee_dsl"}
   ]
 end
 ```
