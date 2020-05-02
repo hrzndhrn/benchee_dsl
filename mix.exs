@@ -8,6 +8,7 @@ defmodule BencheeDsl.MixProject do
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      consolidate_protocols: true,
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: preferred_cli_env()
     ]
@@ -40,7 +41,7 @@ defmodule BencheeDsl.MixProject do
 
   defp deps do
     [
-      {:benchee, "~> 1.0", only: [:dev, :test]},
+      {:benchee, ">= 0.99.0 and < 2.0.0"},
       {:benchee_markdown, "~> 0.1", only: [:dev, :test]},
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
