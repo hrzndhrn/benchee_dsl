@@ -21,8 +21,8 @@ defmodule Basic.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:benchee, "~> 1.0", only: :dev}
-      {:benchee_dsl, path: "../.."}
+      {:benchee, "~> 1.0", only: :dev},
+      {:benchee_dsl, path: "../..", only: :dev}
     ]
   end
 end
