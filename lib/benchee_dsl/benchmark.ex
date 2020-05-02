@@ -1,6 +1,6 @@
 defmodule BencheeDsl.Benchmark do
   @moduledoc """
-  TODO: Add moduledoc
+  Helpers for defining a benchmark with the DSL.
   """
 
   alias BencheeDsl.Server

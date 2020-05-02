@@ -16,8 +16,8 @@ defmodule Mix.Tasks.Bench.Gen do
     config time: 1
 
     inputs %{
-      #"Small" => Enum.to_list(1..1_000),
-      #"Medium" => Enum.to_list(1..10_000),
+      "Small" => Enum.to_list(1..1_000),
+      "Medium" => Enum.to_list(1..10_000),
       "Bigger" => Enum.to_list(1..100_000)
     }
 

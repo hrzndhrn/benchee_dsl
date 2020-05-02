@@ -1,6 +1,6 @@
 defmodule BencheeDsl do
   @moduledoc """
-  TODO: Add moduledoc
+  A DSL for `Benchee`.
   """
 
   alias BencheeDsl.Server
