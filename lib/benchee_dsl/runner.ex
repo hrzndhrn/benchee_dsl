@@ -1,9 +1,11 @@
 defmodule BencheeDsl.Runner do
   @moduledoc false
 
+  alias BencheeDsl.Benchmark
+
   def run(module, opts, config, dsl_config) do
-    if function_exported?(module, :setup_all, 0) do
-      module.setup_all()
+    if function_exported?(module, :setup, 0) do
+      module.setup()
     end
 
     %{config: config} =
@@ -69,13 +71,13 @@ defmodule BencheeDsl.Runner do
   defp same_formatter(a, b), do: a == b
 
   defp benchmark(config, module) do
-    %{
+    Benchmark.new(
       module: module,
       config: config,
       dir: get_attr(module, :__dir__),
       title: get_attr(module, :title),
       description: get_attr(module, :description)
-    }
+    )
   end
 
   defp get_attr(nil), do: nil

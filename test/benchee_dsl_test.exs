@@ -120,7 +120,7 @@ defmodule BencheeDslTest do
       file: "test/fixtures/attr_bench.exs",
       before_each_benchmark: fn benchmark ->
         assert Map.keys(benchmark) |> Enum.sort() ==
-                 [:config, :description, :dir, :module, :title]
+                 [:__struct__, :config, :description, :dir, :module, :title]
 
         assert %{
                  config: config,
@@ -143,8 +143,8 @@ defmodule BencheeDslTest do
     assert BencheeDsl.run()
   end
 
-  @tag :setup_all
-  test "runs benchmark for setup_all_bench.exs" do
+  @tag :setup
+  test "runs benchmark for setup_bench.exs" do
     BencheeDsl.BencheeMock
     |> expect(:run, fn jobs, config ->
       assert %{"do_it" => do_it} = jobs
@@ -158,12 +158,16 @@ defmodule BencheeDslTest do
       if @benchee_run, do: assert(Benchee.run(jobs, config))
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/setup_all_bench.exs")
+    assert BencheeDsl.config(file: "test/fixtures/setup_bench.exs")
 
-    capture_log(fn ->
-      assert BencheeDsl.run()
-      Logger.flush()
-    end) =~ "Hello.*Good.bye"
+    log =
+      capture_log(fn ->
+        assert BencheeDsl.run()
+        Logger.flush()
+      end)
+
+    assert log =~ "Hello, world"
+    assert log =~ "Good bye, world"
   end
 
   @tag :formatter
@@ -196,7 +200,7 @@ defmodule BencheeDslTest do
   @tag :before_each_benchmark
   test "runs function before_each_benchmark" do
     BencheeDsl.BencheeMock
-    |> expect(:run, 2, fn jobs, config ->
+    |> expect(:run, 3, fn jobs, config ->
       assert %{"do_it" => do_it} = jobs
       assert is_function(do_it, 0)
 
@@ -206,24 +210,15 @@ defmodule BencheeDslTest do
     assert BencheeDsl.config(
              path: "test/fixtures/math",
              before_each_benchmark: fn benchmark ->
-               assert Enum.member?([Math.AddBench, Math.SubBench], benchmark.module)
+               assert Enum.member?(
+                        [Math.AddBench, Math.SubBench, Math.Complex.AddBench],
+                        benchmark.module
+                      )
 
                benchmark
              end
            )
 
-    assert BencheeDsl.run()
-  end
-
-  @tag :all
-  test "runs all benchmarks" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, 10, fn jobs, config ->
-      assert is_map(jobs)
-      assert Keyword.keyword?(config)
-    end)
-
-    assert BencheeDsl.config(path: "test/fixtures")
     assert BencheeDsl.run()
   end
 end

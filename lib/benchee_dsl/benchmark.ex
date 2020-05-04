@@ -5,6 +5,51 @@ defmodule BencheeDsl.Benchmark do
 
   alias BencheeDsl.Server
 
+  @keys [
+    :config,
+    :description,
+    :dir,
+    :module,
+    :title
+  ]
+
+  @type keys ::
+          :config
+          | :description
+          | :dir
+          | :module
+          | :title
+
+  @type t :: %__MODULE__{
+          config: keyword(),
+          description: String.t(),
+          dir: String.t(),
+          module: module(),
+          title: String.t()
+        }
+
+  defstruct @keys
+
+  @doc """
+  Creates a new `Benchmark` struct.
+  """
+  @spec new(keyword()) :: t()
+  def new(data), do: struct!(__MODULE__, data)
+
+  @doc """
+  Updates a `benchmark` struct by the given `key` or `path`.
+  """
+  @spec update(t(), keys() | list(atom()), (any() -> any())) :: t()
+  def update(benchmark, key, fun) when key in @keys do
+    Map.update!(benchmark, key, fun)
+  end
+
+  def update(benchmark, [key | path], fun) when key in @keys do
+    Map.update!(benchmark, key, fn data ->
+      update_in(data, path, fun)
+    end)
+  end
+
   defmacro __using__(_opts) do
     quote do
       import BencheeDsl.Benchmark
@@ -16,29 +61,36 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
-  defmacro setup_all(body) do
+  @doc """
+  Defines a `setup` callback to be run before the benchmark starts.
+  """
+  defmacro setup(body) do
     quote do
-      def setup_all, do: unquote(body)
+      def setup, do: unquote(body)
     end
   end
 
+  @doc """
+  Defines a callback that runs once the benchmark exits.
+  """
   defmacro on_exit(fun) do
     quote do
       Server.register(:on_exit, __MODULE__, unquote(fun))
     end
   end
 
+  @doc """
+  Defines a function or `map` to setup the inputs for the benchmark. If inputs
+  has a `do` block a `map` is expected to be returned.
+  """
   defmacro inputs(do: inputs) do
     quote do
-      # Server.register(:inputs, __MODULE__, fn -> unquote(inputs) end)
-      # Server.register(:inputs, __MODULE__, unquote(inputs))
       def inputs, do: unquote(inputs)
     end
   end
 
   defmacro inputs(inputs) do
     quote do
-      # Server.register(:inputs, __MODULE__, unquote(inputs))
       def inputs, do: unquote(inputs)
     end
   end

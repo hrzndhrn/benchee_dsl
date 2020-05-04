@@ -20,7 +20,7 @@ jobs:
   exclude:
     - elixir: 1.6.6
       otp_release: 22.2
-    - elixir: 1.10.2
+    - elixir: 1.10.3
       otp_release: 20.3
 
 before_script:
@@ -32,7 +32,7 @@ script:
   - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted ;fi
   - mix credo --strict
   - mix test
-  - mix dialyzer --halt-exit-status
+  - mix dialyzer
 
 cache:
   directories:
