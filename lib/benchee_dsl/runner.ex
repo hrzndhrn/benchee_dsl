@@ -4,10 +4,6 @@ defmodule BencheeDsl.Runner do
   alias BencheeDsl.Benchmark
 
   def run(module, opts, config, dsl_config) do
-    if function_exported?(module, :setup, 0) do
-      module.setup()
-    end
-
     %{config: config} =
       opts
       |> config(config, module)
@@ -15,6 +11,10 @@ defmodule BencheeDsl.Runner do
       |> before_each_benchmark(dsl_config)
 
     jobs = jobs(module, opts)
+
+    if function_exported?(module, :setup, 0) do
+      module.setup()
+    end
 
     Application.get_env(:benchee_dsl, :benchee).run(jobs, config)
   end
