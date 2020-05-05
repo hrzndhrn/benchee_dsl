@@ -7,7 +7,8 @@ For now, just an early alpha version.
 
 ## Installation
 
-The package isn't released on [hex](https://hex.pm/). If you want to give it a
+The package isn't released on [hex](https://hex.pm/).
+If you want to give it a
 try anywho:
 
 ```elixir
