@@ -59,7 +59,7 @@ defmodule BencheeDslTest do
   test "runs benchmark for inputs_bench.exs" do
     BencheeDsl.BencheeMock
     |> expect(:run, fn jobs, config ->
-      assert %{"flat_map" => flat_map, "map_flatten" => map_flatten} = jobs
+      assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
       assert is_function(flat_map, 1)
       assert is_function(map_flatten, 1)
 

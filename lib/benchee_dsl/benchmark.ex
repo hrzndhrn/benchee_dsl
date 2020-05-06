@@ -111,7 +111,13 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
-  defmacro job({fun_name, _, [var]}, do: body) do
+  defmacro job({fun_name, _, [var]}, do: body), do: quote_job(fun_name, var, body)
+
+  defmacro job(fun_name, var, do: body)
+           when is_binary(fun_name),
+           do: quote_job(fun_name, var, body)
+
+  defp quote_job(fun_name, var, body) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name))
 

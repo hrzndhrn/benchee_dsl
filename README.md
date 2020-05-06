@@ -7,9 +7,8 @@ For now, just an early alpha version.
 
 ## Installation
 
-The package isn't released on [hex](https://hex.pm/).
-If you want to give it a
-try anywho:
+The package isn't released on [hex](https://hex.pm/). You can install the
+package via GitHub.
 
 ```elixir
 def deps do
