@@ -14,7 +14,7 @@ defmodule BencheeDsl do
     Server.config()
     |> path()
     |> benchmarks()
-    |> Enum.each(&Code.compile_file/1)
+    |> Enum.each(&Code.require_file/1)
 
     config
     |> Keyword.merge(@default_config)
