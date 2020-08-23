@@ -1,4 +1,5 @@
 # BencheeDsl
+[![Hex.pm](https://img.shields.io/hexpm/v/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
 ![CI](https://github.com/hrzndhrn/benchee_dsl/workflows/CI/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
