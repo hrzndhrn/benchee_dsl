@@ -5,9 +5,10 @@ defmodule BencheeDsl.Server do
 
   alias BencheeDsl.Runner
 
-  def start_link(_) do
+  def start_link(opts) do
     initial = %{benchmarks: %{}, config: []}
-    Agent.start_link(fn -> initial end, name: __MODULE__)
+    name = Keyword.get(opts, :name, __MODULE__)
+    Agent.start_link(fn -> initial end, name: name)
   end
 
   def run(config) do
@@ -31,32 +32,28 @@ defmodule BencheeDsl.Server do
     end
   end
 
-  def register(:inputs, module, inputs) do
-    update_benchmarks(module, %{inputs: inputs}, fn benchmarks ->
-      Map.put(benchmarks, :inputs, inputs)
-    end)
-  end
+  def register(agent \\ __MODULE__, key, module, value)
 
-  def register(:config, module, config) do
-    update_benchmarks(module, %{config: config}, fn benchmarks ->
+  def register(agent, :config, module, config) do
+    update_benchmarks(agent, module, %{config: config}, fn benchmarks ->
       Map.put(benchmarks, :config, config)
     end)
   end
 
-  def register(:on_exit, module, fun) do
-    update_benchmarks(module, %{on_exit: fun}, fn benchmarks ->
+  def register(agent, :on_exit, module, fun) do
+    update_benchmarks(agent, module, %{on_exit: fun}, fn benchmarks ->
       Map.put(benchmarks, :on_exit, fun)
     end)
   end
 
-  def register(:job, module, job) do
-    update_benchmarks(module, %{jobs: [job]}, fn benchmarks ->
+  def register(agent, :job, module, job) do
+    update_benchmarks(agent, module, %{jobs: [job]}, fn benchmarks ->
       Map.update(benchmarks, :jobs, [job], fn jobs -> [job | jobs] end)
     end)
   end
 
-  def register(:formatter, module, formatter) do
-    update_benchmarks(module, %{formatters: [formatter]}, fn benchmarks ->
+  def register(agent, :formatter, module, formatter) do
+    update_benchmarks(agent, module, %{formatters: [formatter]}, fn benchmarks ->
       Map.update(benchmarks, :formatters, [formatter], fn formatters ->
         [formatter | formatters]
       end)
@@ -69,8 +66,8 @@ defmodule BencheeDsl.Server do
     end)
   end
 
-  defp update_benchmarks(module, initial, fun) do
-    Agent.update(__MODULE__, fn %{benchmarks: benchmarks} = state ->
+  defp update_benchmarks(agent, module, initial, fun) do
+    Agent.update(agent, fn %{benchmarks: benchmarks} = state ->
       Map.put(state, :benchmarks, Map.update(benchmarks, module, initial, fun))
     end)
   end

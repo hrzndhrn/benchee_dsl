@@ -7,6 +7,8 @@ defmodule InputsBench do
     "Bigger" => Enum.to_list(1..100_000)
   }
 
+  config time: 1
+
   job flat_map(input) do
     Enum.flat_map(input, &map_fun/1)
   end

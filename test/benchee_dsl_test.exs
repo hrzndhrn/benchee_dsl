@@ -34,6 +34,22 @@ defmodule BencheeDslTest do
     assert BencheeDsl.run()
   end
 
+  @tag :basic
+  test "runs benchmark for basic_bench.exs and add config" do
+    BencheeDsl.BencheeMock
+    |> expect(:run, fn jobs, config ->
+      assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
+      assert is_function(flat_map, 0)
+      assert is_function(map_flatten, 0)
+      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 10)
+
+      if @benchee_run, do: assert(Benchee.run(jobs, config))
+    end)
+
+    assert BencheeDsl.config(file: "test/fixtures/basic_bench.exs")
+    assert BencheeDsl.run(time: 10)
+  end
+
   @tag :config
   test "runs benchmark for config_bench.exs" do
     BencheeDsl.BencheeMock
@@ -69,7 +85,8 @@ defmodule BencheeDslTest do
                  "Small" => Enum.to_list(1..1_000),
                  "Medium" => Enum.to_list(1..10_000),
                  "Bigger" => Enum.to_list(1..100_000)
-               }
+               },
+               time: 1
              )
 
       if @benchee_run, do: assert(Benchee.run(jobs, config))
