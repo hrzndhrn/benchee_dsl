@@ -1,4 +1,6 @@
 # BencheeDsl
+![CI](https://github.com/hrzndhrn/benchee_dsl/workflows/CI/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 `BencheDsl` provides a DSL to write benchmarks for
 [`Benchee`](https://github.com/bencheeorg/benchee).
