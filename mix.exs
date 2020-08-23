@@ -73,7 +73,7 @@ defmodule BencheeDsl.MixProject do
       maintainers: ["Marcus Kruse"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/hrzndhrn/benchee_dsl",
+        "GitHub" => "https://github.com/hrzndhrn/benchee_dsl"
       }
     ]
   end
