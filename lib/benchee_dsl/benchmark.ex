@@ -1,6 +1,8 @@
 defmodule BencheeDsl.Benchmark do
   @moduledoc """
   Helpers for defining a benchmark with the DSL.
+
+  This module must be used to define and configure a benchmark.
   """
 
   alias BencheeDsl.Server
@@ -95,12 +97,18 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
+  @doc """
+  Configures the benchmark.
+  """
   defmacro config(config) do
     quote do
       Server.register(:config, __MODULE__, unquote(config))
     end
   end
 
+  @doc """
+  This macro defines a function for the benchmark.
+  """
   defmacro job({fun_name, _, nil}, do: body) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name))
@@ -117,16 +125,6 @@ defmodule BencheeDsl.Benchmark do
            when is_binary(fun_name),
            do: quote_job(fun_name, var, body)
 
-  defp quote_job(fun_name, var, body) do
-    quote do
-      Server.register(:job, __MODULE__, unquote(fun_name))
-
-      def job(unquote(fun_name)) do
-        fn unquote(var) -> unquote(body) end
-      end
-    end
-  end
-
   defmacro job(fun_name, do: body) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name))
@@ -137,6 +135,19 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
+  defp quote_job(fun_name, var, body) do
+    quote do
+      Server.register(:job, __MODULE__, unquote(fun_name))
+
+      def job(unquote(fun_name)) do
+        fn unquote(var) -> unquote(body) end
+      end
+    end
+  end
+
+  @doc """
+  Adds a formatter to the benchmark.
+  """
   defmacro formatter(module, opts) do
     quote do
       Server.register(:formatter, __MODULE__, {unquote(module), unquote(opts)})

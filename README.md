@@ -7,16 +7,20 @@ For now, just an early alpha version.
 
 ## Installation
 
-The package isn't released on [hex](https://hex.pm/). You can install the
-package via GitHub.
+First, add `benchee` and `benchee_dsl` to your `mix.exs` dependencies:
 
 ```elixir
 def deps do
   [
     {:benchee, "~> 1.0.0", only: :dev},
-    {:benchee_dsl, git: "https://github.com/hrzndhrn/benchee_dsl", only: :dev}
+    {:benchee_dsl, "~> 0.1.0", only: :dev}
   ]
 end
+```
+
+Then, update your dependencies:
+```shell
+$ mix deps.get
 ```
 
 ## Usage

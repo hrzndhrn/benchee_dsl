@@ -10,6 +10,9 @@ defmodule BencheeDsl do
 
   alias BencheeDsl.Server
 
+  @doc """
+  Runs the benchmarks.
+  """
   def run(config \\ []) do
     Server.config()
     |> path()
@@ -21,6 +24,9 @@ defmodule BencheeDsl do
     |> Server.run()
   end
 
+  @doc """
+  Configures `benchee`.
+  """
   def config(config), do: Server.register(:config, config)
 
   defp path(opts) do

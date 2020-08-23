@@ -11,7 +11,15 @@ defmodule BencheeDsl.MixProject do
       consolidate_protocols: true,
       test_coverage: [tool: ExCoveralls],
       dialyzer: dialyzer(),
-      preferred_cli_env: preferred_cli_env()
+      preferred_cli_env: preferred_cli_env(),
+      docs: [
+        extras: ["README.md"],
+        main: "readme"
+      ],
+      package: package(),
+      name: "BencheeDsl",
+      source_url: "https://github.com/hrzndhrn/benchee_dsl",
+      description: "A DSL for benchee."
     ]
   end
 
@@ -57,6 +65,16 @@ defmodule BencheeDsl.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:mox, "~> 0.5", only: :test}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Marcus Kruse"],
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => "https://github.com/hrzndhrn/benchee_dsl",
+      }
     ]
   end
 end
