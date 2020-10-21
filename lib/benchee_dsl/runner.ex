@@ -3,7 +3,21 @@ defmodule BencheeDsl.Runner do
 
   alias BencheeDsl.Benchmark
 
-  def run(module, opts, config, dsl_config) do
+  def run(module, opts, config, dsl_config, cli_args) do
+    file = get_attr(module, :__file__)
+
+    case included?(file, cli_args) do
+      true ->
+        IO.write("Run: #{Path.relative_to_cwd(file)}\n")
+        run(module, opts, config, dsl_config)
+        IO.write("\n")
+
+      false ->
+        IO.write("Exclude: #{Path.relative_to_cwd(file)}\n")
+    end
+  end
+
+  defp run(module, opts, config, dsl_config) do
     %{config: config} =
       opts
       |> config(config, module)
@@ -17,6 +31,16 @@ defmodule BencheeDsl.Runner do
     end
 
     Application.get_env(:benchee_dsl, :benchee).run(jobs, config)
+  end
+
+  defp included?(file, cli_args) do
+    case Map.fetch(cli_args, :include) do
+      {:ok, include} ->
+        String.ends_with?(file, include)
+
+      :error ->
+        true
+    end
   end
 
   defp config(opts, config, module) do

@@ -1,37 +1,21 @@
 defmodule BencheeDslTest do
   use ExUnit.Case
 
-  import ExUnit.CaptureLog
+  import ExUnit.{CaptureLog, CaptureIO}
   import Mox
 
   require Logger
 
   @benchee_run Application.get_env(:benchee_dsl, :benchee_run)
 
+  setup :verify_on_exit!
+
   setup do
-    on_exit(fn ->
-      verify!()
-
-      :sys.replace_state(BencheeDsl.Server, fn _ ->
-        %{benchmarks: %{}, config: []}
-      end)
-    end)
-  end
-
-  @tag :basic
-  test "runs benchmark for basic_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
-      assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
-      assert is_function(flat_map, 0)
-      assert is_function(map_flatten, 0)
-      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console])
-
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+    :sys.replace_state(BencheeDsl.Server, fn _ ->
+      %{benchmarks: %{}, config: []}
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/basic_bench.exs")
-    assert BencheeDsl.run()
+    :ok
   end
 
   @tag :basic
@@ -47,7 +31,10 @@ defmodule BencheeDslTest do
     end)
 
     assert BencheeDsl.config(file: "test/fixtures/basic_bench.exs")
-    assert BencheeDsl.run(time: 10)
+
+    assert capture_io(fn ->
+             assert BencheeDsl.run(time: 10)
+           end) == "Run: test/fixtures/basic_bench.exs\n\n"
   end
 
   @tag :config
@@ -68,7 +55,10 @@ defmodule BencheeDslTest do
     end)
 
     assert BencheeDsl.config(file: "test/fixtures/config_bench.exs")
-    assert BencheeDsl.run()
+
+    assert capture_io(fn ->
+             assert BencheeDsl.run()
+           end) == "Run: test/fixtures/config_bench.exs\n\n"
   end
 
   @tag :inputs
@@ -93,7 +83,10 @@ defmodule BencheeDslTest do
     end)
 
     assert BencheeDsl.config(file: "test/fixtures/inputs_bench.exs")
-    assert BencheeDsl.run()
+
+    assert capture_io(fn ->
+             assert BencheeDsl.run()
+           end) == "Run: test/fixtures/inputs_bench.exs\n\n"
   end
 
   @tag :inputs_fun
@@ -117,7 +110,10 @@ defmodule BencheeDslTest do
     end)
 
     assert BencheeDsl.config(file: "test/fixtures/inputs_fun_bench.exs")
-    assert BencheeDsl.run()
+
+    assert capture_io(fn ->
+             assert BencheeDsl.run()
+           end) == "Run: test/fixtures/inputs_fun_bench.exs\n\n"
   end
 
   @tag :attr
@@ -157,7 +153,9 @@ defmodule BencheeDslTest do
       end
     )
 
-    assert BencheeDsl.run()
+    assert capture_io(fn ->
+             assert BencheeDsl.run()
+           end) == "Run: test/fixtures/attr_bench.exs\n\n"
   end
 
   @tag :setup
@@ -179,7 +177,10 @@ defmodule BencheeDslTest do
 
     log =
       capture_log(fn ->
-        assert BencheeDsl.run()
+        capture_io(fn ->
+          assert BencheeDsl.run()
+        end)
+
         Logger.flush()
       end)
 
@@ -211,7 +212,10 @@ defmodule BencheeDslTest do
     end)
 
     assert BencheeDsl.config(file: "test/fixtures/formatter_bench.exs")
-    assert BencheeDsl.run()
+
+    assert capture_io(fn ->
+             assert BencheeDsl.run()
+           end) == "Run: test/fixtures/formatter_bench.exs\n\n"
   end
 
   @tag :before_each_benchmark
@@ -236,6 +240,15 @@ defmodule BencheeDslTest do
              end
            )
 
-    assert BencheeDsl.run()
+    assert capture_io(fn ->
+             assert BencheeDsl.run()
+           end) == """
+           Run: test/fixtures/math/add_bench.exs
+
+           Run: test/fixtures/math/complex/add_bench.exs
+
+           Run: test/fixtures/math/sub_bench.exs
+
+           """
   end
 end

@@ -6,21 +6,31 @@ defmodule BencheeDsl.Server do
   alias BencheeDsl.Runner
 
   def start_link(opts) do
-    initial = %{benchmarks: %{}, config: []}
-    name = Keyword.get(opts, :name, __MODULE__)
-    Agent.start_link(fn -> initial end, name: name)
+    Agent.start_link(
+      fn -> initial() end,
+      name: Keyword.get(opts, :name, __MODULE__)
+    )
   end
 
-  def run(config) do
+  def run(config, cli_args) do
     %{benchmarks: benchmarks, config: dsl_config} = Agent.get(__MODULE__, & &1)
 
     Enum.each(benchmarks, fn {module, opts} ->
-      Runner.run(module, opts, config, dsl_config)
+      Runner.run(module, opts, config, dsl_config, cli_args)
       on_exit(module)
     end)
   end
 
   def config, do: Agent.get(__MODULE__, fn %{config: config} -> config end)
+
+  def path do
+    opts = config()
+
+    case Keyword.has_key?(opts, :file) do
+      true -> {:file, opts[:file]}
+      false -> {:path, opts[:path] || Application.get_env(:benchee_dsl, :path)}
+    end
+  end
 
   def on_exit(module) do
     %{benchmarks: benchmarks} = Agent.get(__MODULE__, & &1)
@@ -70,5 +80,9 @@ defmodule BencheeDsl.Server do
     Agent.update(agent, fn %{benchmarks: benchmarks} = state ->
       Map.put(state, :benchmarks, Map.update(benchmarks, module, initial, fun))
     end)
+  end
+
+  defp initial do
+    %{benchmarks: %{}, config: []}
   end
 end

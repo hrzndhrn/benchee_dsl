@@ -14,27 +14,19 @@ defmodule BencheeDsl do
   Runs the benchmarks.
   """
   def run(config \\ []) do
-    Server.config()
-    |> path()
+    Server.path()
     |> benchmarks()
     |> Enum.each(&Code.require_file/1)
 
     @default_config
     |> Keyword.merge(config)
-    |> Server.run()
+    |> Server.run(cli_args())
   end
 
   @doc """
   Configures `benchee`.
   """
   def config(config), do: Server.register(:config, config)
-
-  defp path(opts) do
-    case Keyword.has_key?(opts, :file) do
-      true -> {:file, opts[:file]}
-      false -> {:path, opts[:path] || Application.get_env(:benchee_dsl, :path)}
-    end
-  end
 
   defp benchmarks(path, benchmarks \\ [])
 
@@ -60,6 +52,13 @@ defmodule BencheeDsl do
     case String.ends_with?(path, @ending) do
       true -> [path | acc]
       false -> acc
+    end
+  end
+
+  defp cli_args do
+    case Application.get_env(:benchee_dsl, :cli_args, []) do
+      [benchmark] -> %{include: benchmark}
+      _ -> %{}
     end
   end
 end

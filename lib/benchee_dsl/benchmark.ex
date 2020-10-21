@@ -59,7 +59,9 @@ defmodule BencheeDsl.Benchmark do
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
       Module.register_attribute(__MODULE__, :__dir__, persist: true)
+      Module.register_attribute(__MODULE__, :__file__, persist: true)
       Module.put_attribute(__MODULE__, :__dir__, __DIR__)
+      Module.put_attribute(__MODULE__, :__file__, __ENV__.file)
     end
   end
 
