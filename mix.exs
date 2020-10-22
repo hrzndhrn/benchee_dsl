@@ -1,6 +1,8 @@
 defmodule BencheeDsl.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/hrzndhrn/benchee_dsl"
+
   def project do
     [
       app: :benchee_dsl,
@@ -18,7 +20,7 @@ defmodule BencheeDsl.MixProject do
       ],
       package: package(),
       name: "BencheeDsl",
-      source_url: "https://github.com/hrzndhrn/benchee_dsl",
+      source_url: @source_url,
       description: "A DSL for benchee."
     ]
   end
@@ -73,7 +75,7 @@ defmodule BencheeDsl.MixProject do
       maintainers: ["Marcus Kruse"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/hrzndhrn/benchee_dsl"
+        "GitHub" => @source_url
       }
     ]
   end

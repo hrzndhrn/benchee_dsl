@@ -1,9 +1,12 @@
 # BencheeDsl
 [![Hex.pm](https://img.shields.io/hexpm/v/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
-![CI](https://github.com/hrzndhrn/benchee_dsl/workflows/CI/badge.svg)
+[![Hexdocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/benchee_dsl/)
+[![hex.pm](https://img.shields.io/hexpm/dt/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
+[![hex.pm](https://img.shields.io/hexpm/l/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
+[![CI](https://github.com/hrzndhrn/benchee_dsl/workflows/CI/badge.svg)](https://github.com/hrzndhrn/benchee_dsl/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-`BencheDsl` provides a DSL to write benchmarks for
+`BencheeDsl` provides a DSL to write benchmarks for
 [`Benchee`](https://github.com/bencheeorg/benchee).
 
 For now, just an early alpha version.
@@ -31,7 +34,7 @@ Generate the `bench` directory, the `bench/benchee_helper.exs`, and the example
 `bench/example_bench.exs` with:
 
 ```
-> mix bench.gen
+$ mix bench.gen
 Create directory bench.
 Write 'bench/benchee_helper.exs'.
 Write 'bench/example_bench.exs'.
@@ -40,7 +43,7 @@ Write 'bench/example_bench.exs'.
 Start the benchmark with:
 
 ```
-> mix bench
+$ mix bench
 ...
 Benchmarking flat_map with input Bigger...
 Benchmarking flat_map with input Medium...
@@ -51,7 +54,7 @@ Benchmarking map_flatten with input Small...
 ...
 ```
 
-## Writing benchmakrs
+## Writing benchmarks
 
 In the standard configuration the benchmarks are stored in the `bench`
 directory. The benchmarks are saved in a file with the ending `_bench.exs`.
