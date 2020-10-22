@@ -8,8 +8,6 @@ defmodule BencheeDsl do
   @ending "_bench.exs"
   @default_config [formatters: [Benchee.Formatters.Console]]
 
-  alias BencheeDsl.Server
-
   @doc """
   Runs the benchmarks.
   """
