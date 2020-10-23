@@ -1,8 +1,5 @@
 # BencheeDsl
 [![Hex.pm](https://img.shields.io/hexpm/v/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
-[![Hexdocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/benchee_dsl/)
-[![hex.pm](https://img.shields.io/hexpm/dt/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
-[![hex.pm](https://img.shields.io/hexpm/l/benchee_dsl.svg)](https://hex.pm/packages/benchee_dsl)
 [![CI](https://github.com/hrzndhrn/benchee_dsl/workflows/CI/badge.svg)](https://github.com/hrzndhrn/benchee_dsl/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
