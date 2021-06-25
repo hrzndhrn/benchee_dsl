@@ -6,6 +6,8 @@ defmodule BencheeDslTest do
 
   require Logger
 
+  alias BencheeDsl.BencheeMock
+
   @benchee_run Application.get_env(:benchee_dsl, :benchee_run)
 
   setup :verify_on_exit!
@@ -20,8 +22,7 @@ defmodule BencheeDslTest do
 
   @tag :basic
   test "runs benchmark for basic_bench.exs and add config" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
       assert is_function(flat_map, 0)
       assert is_function(map_flatten, 0)
@@ -39,8 +40,7 @@ defmodule BencheeDslTest do
 
   @tag :config
   test "runs benchmark for config_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
       assert is_function(flat_map, 0)
       assert is_function(map_flatten, 0)
@@ -63,8 +63,7 @@ defmodule BencheeDslTest do
 
   @tag :inputs
   test "runs benchmark for inputs_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
       assert is_function(flat_map, 1)
       assert is_function(map_flatten, 1)
@@ -91,8 +90,7 @@ defmodule BencheeDslTest do
 
   @tag :inputs_fun
   test "runs benchmark for inputs_fun_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map_flatten" => map_flatten} = jobs
       assert is_function(flat_map, 1)
       assert is_function(map_flatten, 1)
@@ -118,8 +116,7 @@ defmodule BencheeDslTest do
 
   @tag :attr
   test "runs benchmark for attr_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
       assert is_function(flat_map, 0)
       assert is_function(map_flatten, 0)
@@ -160,8 +157,7 @@ defmodule BencheeDslTest do
 
   @tag :setup
   test "runs benchmark for setup_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       assert %{"do_it" => do_it} = jobs
       assert is_function(do_it, 0)
 
@@ -190,8 +186,7 @@ defmodule BencheeDslTest do
 
   @tag :formatter
   test "runs benchmark for formatter_bench.exs" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, fn jobs, config ->
+    expect(BencheeMock, :run, fn jobs, config ->
       path = "test/fixtures/formatter.md"
 
       assert %{"do_it" => do_it} = jobs
@@ -220,8 +215,7 @@ defmodule BencheeDslTest do
 
   @tag :before_each_benchmark
   test "runs function before_each_benchmark" do
-    BencheeDsl.BencheeMock
-    |> expect(:run, 3, fn jobs, config ->
+    expect(BencheeMock, :run, 3, fn jobs, config ->
       assert %{"do_it" => do_it} = jobs
       assert is_function(do_it, 0)
 
@@ -250,5 +244,73 @@ defmodule BencheeDslTest do
            Run: test/fixtures/math/sub_bench.exs
 
            """
+  end
+
+  @tag :delegate
+  test "runs benchmark for delegate_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert %{"flat_map" => flat_map, "mf" => map_flatten} = jobs
+      assert is_function(flat_map, 1)
+      assert is_function(map_flatten, 1)
+
+      assert Keyword.equal?(config,
+               inputs: %{"bigger" => [1, 100_000], "medium" => [1, 10_000], "small" => [1, 100]},
+               formatters: [Benchee.Formatters.Console]
+             )
+
+      if @benchee_run, do: assert(Benchee.run(jobs, config))
+    end)
+
+    assert BencheeDsl.config(file: "test/fixtures/delegate_bench.exs")
+
+    output =
+      capture_io(fn ->
+        assert BencheeDsl.run()
+      end)
+
+    assert String.starts_with?(output, "Run: test/fixtures/delegate_bench.exs")
+  end
+
+  @tag :jobs_override
+  test "runs benchmark for jobs_override_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert %{"map" => map} = jobs
+      assert is_function(map, 0)
+
+      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 1)
+
+      if @benchee_run, do: assert(Benchee.run(jobs, config))
+    end)
+
+    assert BencheeDsl.config(file: "test/fixtures/jobs_override_bench.exs")
+
+    output =
+      capture_io(fn ->
+        assert BencheeDsl.run()
+      end)
+
+    assert String.starts_with?(output, "Run: test/fixtures/jobs_override_bench.exs")
+  end
+
+  @tag :jobs_update
+  test "runs benchmark for jobs_update_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert %{"map" => map, "add" => add} = jobs
+      assert is_function(map, 0)
+      assert is_function(add, 0)
+
+      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 1)
+
+      if @benchee_run, do: assert(Benchee.run(jobs, config))
+    end)
+
+    assert BencheeDsl.config(file: "test/fixtures/jobs_update_bench.exs")
+
+    output =
+      capture_io(fn ->
+        assert BencheeDsl.run()
+      end)
+
+    assert String.starts_with?(output, "Run: test/fixtures/jobs_update_bench.exs")
   end
 end

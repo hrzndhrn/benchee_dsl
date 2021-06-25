@@ -24,7 +24,17 @@ defmodule BencheeDsl.Runner do
       |> benchmark(module)
       |> before_each_benchmark(dsl_config)
 
-    jobs = jobs(module, opts)
+    jobs =
+      case function_exported?(module, :jobs, 0) do
+        true -> module.jobs()
+        false -> jobs(module, opts)
+      end
+
+    jobs =
+      case function_exported?(module, :jobs, 1) do
+        true -> module.jobs(jobs)
+        false -> jobs
+      end
 
     if function_exported?(module, :setup, 0) do
       module.setup()
@@ -115,4 +125,6 @@ defmodule BencheeDsl.Runner do
       {to_string(job), module.job(job)}
     end)
   end
+
+  defp jobs(_, _), do: raise("No jobs found")
 end

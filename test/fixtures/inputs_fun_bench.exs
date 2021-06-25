@@ -15,6 +15,8 @@ defmodule InputsFunBench do
 
   def map_fun(i), do: [i, i * i]
 
+  defp data(range), do: Enum.to_list(range)
+
   job flat_map(input) do
     Enum.flat_map(input, &map_fun/1)
   end
@@ -22,6 +24,4 @@ defmodule InputsFunBench do
   job map_flatten(input) do
     input |> Enum.map(&map_fun/1) |> List.flatten()
   end
-
-  defp data(range), do: Enum.to_list(range)
 end

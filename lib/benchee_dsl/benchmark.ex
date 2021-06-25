@@ -68,7 +68,7 @@ defmodule BencheeDsl.Benchmark do
   @doc """
   Defines a `setup` callback to be run before the benchmark starts.
   """
-  defmacro setup(body) do
+  defmacro setup(do: body) do
     quote do
       def setup, do: unquote(body)
     end
@@ -80,6 +80,24 @@ defmodule BencheeDsl.Benchmark do
   defmacro on_exit(fun) do
     quote do
       Server.register(:on_exit, __MODULE__, unquote(fun))
+    end
+  end
+
+  @doc """
+  Overwrites the job map. This function can be used to set up jobs dynamically.
+  """
+  defmacro jobs(do: body) do
+    quote do
+      def jobs, do: unquote(body)
+    end
+  end
+
+  @doc """
+  Updates the job map. This function can be used to set up jobs dynamically.
+  """
+  defmacro jobs(var, do: body) do
+    quote do
+      def jobs(unquote(var)), do: unquote(body)
     end
   end
 
@@ -111,6 +129,14 @@ defmodule BencheeDsl.Benchmark do
   @doc """
   This macro defines a function for the benchmark.
   """
+  defmacro job({:&, _, [{:/, _, [{fun_name, _, nil}, _]}]} = fun) do
+    quote_job(fun, fun_name)
+  end
+
+  defmacro job({:&, _, [{:/, _, [{_, _, nil}, _]}]} = fun, as: as) do
+    quote_job(fun, as)
+  end
+
   defmacro job({fun_name, _, nil}, do: body) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name))
@@ -121,11 +147,13 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
-  defmacro job({fun_name, _, [var]}, do: body), do: quote_job(fun_name, var, body)
+  defmacro job({fun_name, _, [var]}, do: body) do
+    quote_job(fun_name, var, body)
+  end
 
-  defmacro job(fun_name, var, do: body)
-           when is_binary(fun_name),
-           do: quote_job(fun_name, var, body)
+  defmacro job(fun_name, var, do: body) when is_binary(fun_name) do
+    quote_job(fun_name, var, body)
+  end
 
   defmacro job(fun_name, do: body) do
     quote do
@@ -143,6 +171,16 @@ defmodule BencheeDsl.Benchmark do
 
       def job(unquote(fun_name)) do
         fn unquote(var) -> unquote(body) end
+      end
+    end
+  end
+
+  defp quote_job(fun, as) do
+    quote do
+      Server.register(:job, __MODULE__, unquote(as))
+
+      def job(unquote(as)) do
+        fn input -> apply(unquote(fun), input) end
       end
     end
   end
