@@ -142,7 +142,6 @@ defmodule BencheeDsl.Benchmark do
     quote_job_apply(as, fun)
   end
 
-
   defmacro job({fun_name, _, nil}, do: body) do
     quote_job(fun_name, body)
   end
