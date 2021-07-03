@@ -121,10 +121,34 @@ defmodule BencheeDsl.Runner do
   defp get_attr(module, key), do: get_attr(module.__info__(:attributes)[key])
 
   defp jobs(module, %{jobs: jobs}) do
-    Enum.into(jobs, %{}, fn job ->
-      {to_string(job), module.job(job)}
+    Enum.reduce(jobs, %{}, fn {job, opts}, acc ->
+      tags = Keyword.get(opts, :tags)
+      before = opts |> Keyword.get(:before) |> before()
+      name = to_string(job)
+      fun = module.job(job)
+
+      case {Enum.member?(tags, :skip), before} do
+        {true, _} -> acc
+        {false, nil} -> Map.put(acc, name, fun)
+        {false, before} -> Map.put(acc, name, {fun, before_scenario: before})
+      end
     end)
   end
 
-  defp jobs(_, _), do: raise("No jobs found")
+  defp jobs(_, _), do: %{}
+
+  defp before(nil), do: nil
+
+  defp before(fun) do
+    case Function.info(fun, :arity) do
+      {:arity, 0} ->
+        fn x ->
+          apply(fun, [])
+          x
+        end
+
+      {:arity, 1} ->
+        fun
+    end
+  end
 end

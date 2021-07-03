@@ -26,16 +26,12 @@ defmodule BencheeDslTest do
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
       assert is_function(flat_map, 0)
       assert is_function(map_flatten, 0)
-      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 10)
+      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console])
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/basic_bench.exs")
-
-    assert capture_io(fn ->
-             assert BencheeDsl.run(time: 10)
-           end) == "Run: test/fixtures/basic_bench.exs\n\n"
+    assert_run("test/fixtures/basic_bench.exs")
   end
 
   @tag :config
@@ -51,14 +47,10 @@ defmodule BencheeDslTest do
                {:parallel, 2}
              ])
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/config_bench.exs")
-
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == "Run: test/fixtures/config_bench.exs\n\n"
+    assert_run("test/fixtures/config_bench.exs")
   end
 
   @tag :inputs
@@ -78,14 +70,10 @@ defmodule BencheeDslTest do
                time: 1
              )
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/inputs_bench.exs")
-
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == "Run: test/fixtures/inputs_bench.exs\n\n"
+    assert_run("test/fixtures/inputs_bench.exs")
   end
 
   @tag :inputs_fun
@@ -104,14 +92,10 @@ defmodule BencheeDslTest do
                formatters: [Benchee.Formatters.Console]
              )
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/inputs_fun_bench.exs")
-
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == "Run: test/fixtures/inputs_fun_bench.exs\n\n"
+    assert_run("test/fixtures/inputs_fun_bench.exs")
   end
 
   @tag :attr
@@ -123,7 +107,7 @@ defmodule BencheeDslTest do
 
       assert Keyword.equal?(config, [{:formatters, [Benchee.Formatters.Console]}, time: 3])
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
     BencheeDsl.config(
@@ -166,7 +150,7 @@ defmodule BencheeDslTest do
                time: 1
              )
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
     assert BencheeDsl.config(file: "test/fixtures/setup_bench.exs")
@@ -206,11 +190,7 @@ defmodule BencheeDslTest do
       end
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/formatter_bench.exs")
-
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == "Run: test/fixtures/formatter_bench.exs\n\n"
+    assert_run("test/fixtures/formatter_bench.exs")
   end
 
   @tag :before_each_benchmark
@@ -219,7 +199,7 @@ defmodule BencheeDslTest do
       assert %{"do_it" => do_it} = jobs
       assert is_function(do_it, 0)
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
     assert BencheeDsl.config(
@@ -249,7 +229,15 @@ defmodule BencheeDslTest do
   @tag :delegate
   test "runs benchmark for delegate_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
-      assert %{"flat_map" => flat_map, "mf" => map_flatten} = jobs
+      assert jobs |> Map.keys() |> Enum.sort() == ["Foo.Bar.Baz.flat_map", "flat_map", "mf"]
+
+      assert %{
+               "Foo.Bar.Baz.flat_map" => foo_bar_baz,
+               "flat_map" => flat_map,
+               "mf" => map_flatten
+             } = jobs
+
+      assert is_function(foo_bar_baz, 1)
       assert is_function(flat_map, 1)
       assert is_function(map_flatten, 1)
 
@@ -258,17 +246,10 @@ defmodule BencheeDslTest do
                formatters: [Benchee.Formatters.Console]
              )
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/delegate_bench.exs")
-
-    output =
-      capture_io(fn ->
-        assert BencheeDsl.run()
-      end)
-
-    assert String.starts_with?(output, "Run: test/fixtures/delegate_bench.exs")
+    assert_run("test/fixtures/delegate_bench.exs")
   end
 
   @tag :jobs_override
@@ -279,17 +260,10 @@ defmodule BencheeDslTest do
 
       assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 1)
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/jobs_override_bench.exs")
-
-    output =
-      capture_io(fn ->
-        assert BencheeDsl.run()
-      end)
-
-    assert String.starts_with?(output, "Run: test/fixtures/jobs_override_bench.exs")
+    assert_run("test/fixtures/jobs_override_bench.exs")
   end
 
   @tag :jobs_update
@@ -301,16 +275,44 @@ defmodule BencheeDslTest do
 
       assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 1)
 
-      if @benchee_run, do: assert(Benchee.run(jobs, config))
+      benchee_run(jobs, config)
     end)
 
-    assert BencheeDsl.config(file: "test/fixtures/jobs_update_bench.exs")
+    assert_run("test/fixtures/jobs_update_bench.exs")
+  end
+
+  @tag :before
+  test "runs benchmark for before_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert %{
+               "flat_map" => {flat_map, before_scenario: flat_map_before},
+               "map.flatten" => {map_flatten, before_scenario: map_flatten_before}
+             } = jobs
+
+      assert is_function(flat_map, 1)
+      assert is_function(flat_map_before, 1)
+      assert is_function(map_flatten, 1)
+      assert is_function(map_flatten_before, 1)
+      assert map_flatten_before.(:in) == :in
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/before_bench.exs")
+  end
+
+  defp assert_run(file) do
+    assert BencheeDsl.config(file: file)
 
     output =
       capture_io(fn ->
         assert BencheeDsl.run()
       end)
 
-    assert String.starts_with?(output, "Run: test/fixtures/jobs_update_bench.exs")
+    assert String.starts_with?(output, "Run: #{file}")
+  end
+
+  defp benchee_run(jobs, config) do
+    if @benchee_run, do: assert(Benchee.run(jobs, config))
   end
 end

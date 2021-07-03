@@ -58,9 +58,14 @@ defmodule BencheeDsl.Benchmark do
 
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
+
+      Module.register_attribute(__MODULE__, :tag, accumulate: true)
+      Module.register_attribute(__MODULE__, :before, persist: true)
+
       Module.register_attribute(__MODULE__, :__dir__, persist: true)
-      Module.register_attribute(__MODULE__, :__file__, persist: true)
       Module.put_attribute(__MODULE__, :__dir__, __DIR__)
+
+      Module.register_attribute(__MODULE__, :__file__, persist: true)
       Module.put_attribute(__MODULE__, :__file__, __ENV__.file)
     end
   end
@@ -129,45 +134,37 @@ defmodule BencheeDsl.Benchmark do
   @doc """
   This macro defines a function for the benchmark.
   """
-  defmacro job({:&, _, [{:/, _, [{fun_name, _, nil}, _]}]} = fun) do
-    quote_job(fun, fun_name)
+  defmacro job({:&, _, [{:/, _, [{_, _, _} = fun_name, _]}]} = fun) do
+    quote_job_apply(Macro.to_string(fun_name), fun)
   end
 
-  defmacro job({:&, _, [{:/, _, [{_, _, nil}, _]}]} = fun, as: as) do
-    quote_job(fun, as)
+  defmacro job({:&, _, [{:/, _, [{_, _, _}, _]}]} = fun, as: as) do
+    quote_job_apply(as, fun)
   end
+
 
   defmacro job({fun_name, _, nil}, do: body) do
-    quote do
-      Server.register(:job, __MODULE__, unquote(fun_name))
-
-      def job(unquote(fun_name)) do
-        fn -> unquote(body) end
-      end
-    end
+    quote_job(fun_name, body)
   end
 
   defmacro job({fun_name, _, [var]}, do: body) do
     quote_job(fun_name, var, body)
   end
 
+  defmacro job(fun_name, do: body) do
+    quote_job(fun_name, do: body)
+  end
+
   defmacro job(fun_name, var, do: body) when is_binary(fun_name) do
     quote_job(fun_name, var, body)
   end
 
-  defmacro job(fun_name, do: body) do
-    quote do
-      Server.register(:job, __MODULE__, unquote(fun_name))
-
-      def job(unquote(fun_name)) do
-        fn -> unquote(body) end
-      end
-    end
-  end
-
   defp quote_job(fun_name, var, body) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name))
+      Server.register(:job, __MODULE__, unquote(fun_name),
+        tags: Module.delete_attribute(__MODULE__, :tag),
+        before: Module.delete_attribute(__MODULE__, :before)
+      )
 
       def job(unquote(fun_name)) do
         fn unquote(var) -> unquote(body) end
@@ -175,12 +172,28 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
-  defp quote_job(fun, as) do
+  defp quote_job(fun_name, body) do
     quote do
-      Server.register(:job, __MODULE__, unquote(as))
+      Server.register(:job, __MODULE__, unquote(fun_name),
+        tags: Module.delete_attribute(__MODULE__, :tag),
+        before: Module.delete_attribute(__MODULE__, :before)
+      )
 
-      def job(unquote(as)) do
-        fn input -> apply(unquote(fun), input) end
+      def job(unquote(fun_name)) do
+        fn -> unquote(body) end
+      end
+    end
+  end
+
+  defp quote_job_apply(fun_name, body) do
+    quote do
+      Server.register(:job, __MODULE__, unquote(fun_name),
+        tags: Module.delete_attribute(__MODULE__, :tag),
+        before: Module.delete_attribute(__MODULE__, :before)
+      )
+
+      def job(unquote(fun_name)) do
+        fn input -> apply(unquote(body), input) end
       end
     end
   end

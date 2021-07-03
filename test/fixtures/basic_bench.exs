@@ -8,4 +8,7 @@ defmodule BasicBench do
   job flat_map, do: Enum.flat_map(@list, &map_fun/1)
 
   job "map.flatten", do: @list |> Enum.map(&map_fun/1) |> List.flatten()
+
+  @tag :skip
+  job foo2, do: 1 + 1
 end

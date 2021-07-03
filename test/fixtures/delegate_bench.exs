@@ -7,9 +7,17 @@ defmodule Foo do
     a |> data(b) |> Enum.map(&map_fun/1) |> List.flatten()
   end
 
-  defp data(a, b), do: Enum.to_list(a..b)
+  def data(a, b), do: Enum.to_list(a..b)
 
-  defp map_fun(i), do: [i, i * i]
+  def map_fun(i), do: [i, i * i]
+end
+
+defmodule Foo.Bar.Baz do
+  import Foo
+
+  def flat_map(a, b) do
+    a |> data(b) |> Enum.flat_map(&map_fun/1)
+  end
 end
 
 defmodule DelegateBench do
@@ -26,4 +34,6 @@ defmodule DelegateBench do
   job(&flat_map/2)
 
   job &map_flatten/2, as: :mf
+
+  job &Foo.Bar.Baz.flat_map/2
 end

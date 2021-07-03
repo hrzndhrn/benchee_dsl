@@ -42,37 +42,35 @@ defmodule BencheeDsl.Server do
     end
   end
 
-  def register(agent \\ __MODULE__, key, module, value)
+  def register(:config, fun) do
+    Agent.update(__MODULE__, fn state ->
+      Map.put(state, :config, fun)
+    end)
+  end
 
-  def register(agent, :config, module, config) do
-    update_benchmarks(agent, module, %{config: config}, fn benchmarks ->
+  def register(:config, module, config) do
+    update_benchmarks(__MODULE__, module, %{config: config}, fn benchmarks ->
       Map.put(benchmarks, :config, config)
     end)
   end
 
-  def register(agent, :on_exit, module, fun) do
-    update_benchmarks(agent, module, %{on_exit: fun}, fn benchmarks ->
+  def register(:on_exit, module, fun) do
+    update_benchmarks(__MODULE__, module, %{on_exit: fun}, fn benchmarks ->
       Map.put(benchmarks, :on_exit, fun)
     end)
   end
 
-  def register(agent, :job, module, job) do
-    update_benchmarks(agent, module, %{jobs: [job]}, fn benchmarks ->
-      Map.update(benchmarks, :jobs, [job], fn jobs -> [job | jobs] end)
-    end)
-  end
-
-  def register(agent, :formatter, module, formatter) do
-    update_benchmarks(agent, module, %{formatters: [formatter]}, fn benchmarks ->
+  def register(:formatter, module, formatter) do
+    update_benchmarks(__MODULE__, module, %{formatters: [formatter]}, fn benchmarks ->
       Map.update(benchmarks, :formatters, [formatter], fn formatters ->
         [formatter | formatters]
       end)
     end)
   end
 
-  def register(:config, fun) do
-    Agent.update(__MODULE__, fn state ->
-      Map.put(state, :config, fun)
+  def register(:job, module, job, opts) do
+    update_benchmarks(__MODULE__, module, %{jobs: [{job, opts}]}, fn benchmarks ->
+      Map.update(benchmarks, :jobs, [{job, opts}], fn jobs -> [{job, opts} | jobs] end)
     end)
   end
 
