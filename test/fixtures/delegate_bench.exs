@@ -36,5 +36,5 @@ defmodule DelegateBench do
   job &map_flatten/2, as: :mf
 
   # credo:disable-for-next-line
-  job &Foo.Bar.Baz.flat_map/2
+  job(&Foo.Bar.Baz.flat_map/2)
 end
