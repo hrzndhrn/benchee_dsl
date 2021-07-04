@@ -135,7 +135,8 @@ defmodule BencheeDsl.Benchmark do
   This macro defines a function for the benchmark.
   """
   defmacro job({:&, _, [{:/, _, [{_, _, _} = fun_name, arity]}]} = fun) do
-    quote_job_apply(Macro.to_string(fun_name), fun, arity)
+    # The `String.trim_trailing/2` is needed for older Elixir versions.
+    quote_job_apply(fun_name |> Macro.to_string() |> String.trim_trailing("()"), fun, arity)
   end
 
   defmacro job({:&, _, [{:/, _, [{_, _, _}, arity]}]} = fun, as: as) do

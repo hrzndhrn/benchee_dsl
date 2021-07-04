@@ -229,19 +229,15 @@ defmodule BencheeDslTest do
   @tag :delegate
   test "runs benchmark for delegate_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
-      assert Enum.member?(
-               [
-                 ["Foo.Bar.Baz.flat_map", "flat_map", "mf"],
-                 ["Foo.Bar.Baz.flat_map()", "flat_map", "mf"]
-               ],
-               jobs |> Map.keys() |> Enum.sort()
-             )
+      assert jobs |> Map.keys() |> Enum.sort() == ["Foo.Bar.Baz.flat_map", "flat_map", "mf"]
 
-      assert %{
-               "Foo.Bar.Baz.flat_map" => foo_bar_baz,
-               "flat_map" => flat_map,
-               "mf" => map_flatten
-             } = jobs
+      assert(
+        %{
+          "Foo.Bar.Baz.flat_map" => foo_bar_baz,
+          "flat_map" => flat_map,
+          "mf" => map_flatten
+        } = jobs
+      )
 
       assert is_function(foo_bar_baz, 1)
       assert is_function(flat_map, 1)
