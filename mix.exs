@@ -62,10 +62,10 @@ defmodule BencheeDsl.MixProject do
     [
       {:benchee, ">= 0.99.0 and < 2.0.0"},
       {:benchee_markdown, "~> 0.1", only: [:dev, :test]},
-      {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.10", only: :test, runtime: false},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.1", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.13", only: :test, runtime: false},
       {:mox, "~> 1.0", only: :test}
     ]
   end
