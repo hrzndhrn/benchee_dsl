@@ -31,7 +31,7 @@ defmodule DelegateBench do
     "bigger" => [1, 100_000]
   }
 
-  job(&flat_map/2)
+  job &flat_map/2
 
   job &map_flatten/2, as: :mf
 

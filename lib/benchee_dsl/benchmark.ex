@@ -134,12 +134,12 @@ defmodule BencheeDsl.Benchmark do
   @doc """
   This macro defines a function for the benchmark.
   """
-  defmacro job({:&, _, [{:/, _, [{_, _, _} = fun_name, _]}]} = fun) do
-    quote_job_apply(Macro.to_string(fun_name), fun)
+  defmacro job({:&, _, [{:/, _, [{_, _, _} = fun_name, arity]}]} = fun) do
+    quote_job_apply(Macro.to_string(fun_name), fun, arity)
   end
 
-  defmacro job({:&, _, [{:/, _, [{_, _, _}, _]}]} = fun, as: as) do
-    quote_job_apply(as, fun)
+  defmacro job({:&, _, [{:/, _, [{_, _, _}, arity]}]} = fun, as: as) do
+    quote_job_apply(as, fun, arity)
   end
 
   defmacro job({fun_name, _, nil}, do: body) do
@@ -184,7 +184,20 @@ defmodule BencheeDsl.Benchmark do
     end
   end
 
-  defp quote_job_apply(fun_name, body) do
+  defp quote_job_apply(fun_name, body, 0) do
+    quote do
+      Server.register(:job, __MODULE__, unquote(fun_name),
+        tags: Module.delete_attribute(__MODULE__, :tag),
+        before: Module.delete_attribute(__MODULE__, :before)
+      )
+
+      def job(unquote(fun_name)) do
+        fn -> apply(unquote(body), []) end
+      end
+    end
+  end
+
+  defp quote_job_apply(fun_name, body, _arity) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name),
         tags: Module.delete_attribute(__MODULE__, :tag),
