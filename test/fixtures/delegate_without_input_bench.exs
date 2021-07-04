@@ -12,7 +12,7 @@ defmodule DelegateWithoutInputBench do
 
   import Bar
 
-  job &flat_map/0
+  job(&flat_map/0)
 
-  job &map_flatten/0
+  job(&map_flatten/0)
 end
