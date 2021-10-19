@@ -1,9 +1,9 @@
 # BencheeDsl
 
 [![Hex.pm versions](https://img.shields.io/hexpm/v/benchee_dsl.svg?style=flat-square)](https://hex.pm/packages/benchee_dsl)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/hrzndhrn/benchee_dsl/CI?style=flat-square)](https://github.com/hrzndhrn/benchee_dsl/actions)
-[![Coveralls](https://img.shields.io/coveralls/github/hrzndhrn/benchee_dsl?style=flat-square)](https://coveralls.io/github/hrzndhrn/benchee_dsl)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://github.com/hrzndhrn/benchee_dsl/blob/master/LICENSE.md)
+[![GitHub: CI status](https://img.shields.io/github/workflow/status/hrzndhrn//CI?style=flat-square)](https://github.com/hrzndhrn//actions)
+[![Coveralls: coverage](https://img.shields.io/coveralls/github/hrzndhrn/benchee_dsl?style=flat-square)](https://coveralls.io/github/hrzndhrn/benchee_dsl)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://github.com/hrzndhrn/benchee_dsl/blob/main/LICENSE.md)
 
 `BencheeDsl` provides a DSL to write benchmarks for [`Benchee`](https://github.com/bencheeorg/benchee).
 
