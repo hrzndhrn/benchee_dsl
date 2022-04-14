@@ -61,11 +61,11 @@ defmodule BencheeDsl.MixProject do
   defp deps do
     [
       {:benchee, ">= 0.99.0 and < 2.0.0"},
-      {:benchee_markdown, "~> 0.1", only: [:dev, :test]},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:benchee_markdown, "~> 0.2", only: [:dev, :test]},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.13", only: :test, runtime: false},
+      {:ex_doc, "~> 0.28", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.14", only: :test, runtime: false},
       {:mox, "~> 1.0", only: :test}
     ]
   end
