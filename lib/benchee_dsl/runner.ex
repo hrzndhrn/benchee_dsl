@@ -143,7 +143,7 @@ defmodule BencheeDsl.Runner do
     case Function.info(fun, :arity) do
       {:arity, 0} ->
         fn x ->
-          apply(fun, [])
+          fun.()
           x
         end
 
