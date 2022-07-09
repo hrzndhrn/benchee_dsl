@@ -9,7 +9,7 @@ defmodule BencheeDsl.MixProject do
       version: "0.1.3",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
+      deps: deps() ++ recode(),
       consolidate_protocols: true,
       test_coverage: [tool: ExCoveralls],
       dialyzer: dialyzer(),
@@ -68,6 +68,13 @@ defmodule BencheeDsl.MixProject do
       {:excoveralls, "~> 0.14", only: :test, runtime: false},
       {:mox, "~> 1.0", only: :test}
     ]
+  end
+
+  defp recode() do
+    case Version.match?(System.version(), "~> 1.12") do
+      true -> [{:recode, "~> 0.1", only: [:dev, :test]}]
+      false -> []
+    end
   end
 
   defp package do

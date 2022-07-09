@@ -113,7 +113,7 @@ defmodule BencheeDslTest do
     BencheeDsl.config(
       file: "test/fixtures/attr_bench.exs",
       before_each_benchmark: fn benchmark ->
-        assert Map.keys(benchmark) |> Enum.sort() ==
+        assert benchmark |> Map.keys() |> Enum.sort() ==
                  [:__struct__, :config, :description, :dir, :module, :title]
 
         assert %{
