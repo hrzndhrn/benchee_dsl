@@ -20,7 +20,6 @@ defmodule BencheeDslTest do
     :ok
   end
 
-  @tag :basic
   test "runs benchmark for basic_bench.exs and add config" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
@@ -34,7 +33,32 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/basic_bench.exs")
   end
 
-  @tag :config
+  test "runs benchmark with BasicBench.run/1" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
+      assert is_function(flat_map, 0)
+      assert is_function(map_flatten, 0)
+      assert Keyword.equal?(config, [])
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/basic_bench.exs", BasicBench)
+  end
+
+  test "runs benchmark with Benchmark.One.run/1 and ignores Bencmark.Two" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert %{"one_one" => one, "one_two" => two} = jobs
+      assert is_function(one, 0)
+      assert is_function(two, 0)
+      assert Keyword.equal?(config, [])
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/benchmarks.exs", Benchmark.One)
+  end
+
   test "runs benchmark for config_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
@@ -53,7 +77,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/config_bench.exs")
   end
 
-  @tag :inputs
   test "runs benchmark for inputs_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
@@ -76,7 +99,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/inputs_bench.exs")
   end
 
-  @tag :inputs_fun
   test "runs benchmark for inputs_fun_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map_flatten" => map_flatten} = jobs
@@ -98,7 +120,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/inputs_fun_bench.exs")
   end
 
-  @tag :attr
   test "runs benchmark for attr_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"flat_map" => flat_map, "map.flatten" => map_flatten} = jobs
@@ -139,7 +160,6 @@ defmodule BencheeDslTest do
            end) == "Run: test/fixtures/attr_bench.exs\n\n"
   end
 
-  @tag :setup
   test "runs benchmark for setup_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"do_it" => do_it} = jobs
@@ -168,7 +188,6 @@ defmodule BencheeDslTest do
     assert log =~ "Good bye, world"
   end
 
-  @tag :formatter
   test "runs benchmark for formatter_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       path = "test/fixtures/formatter.md"
@@ -193,7 +212,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/formatter_bench.exs")
   end
 
-  @tag :before_each_benchmark
   test "runs function before_each_benchmark" do
     expect(BencheeMock, :run, 3, fn jobs, config ->
       assert %{"do_it" => do_it} = jobs
@@ -226,7 +244,6 @@ defmodule BencheeDslTest do
            """
   end
 
-  @tag :delegate
   test "runs benchmark for delegate_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert jobs |> Map.keys() |> Enum.sort() == ["Foo.Bar.Baz.flat_map", "flat_map", "mf"]
@@ -254,7 +271,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/delegate_bench.exs")
   end
 
-  @tag :delegate
   test "runs benchmark for delegate__without_input_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert jobs |> Map.keys() |> Enum.sort() == ["flat_map", "map_flatten"]
@@ -275,7 +291,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/delegate_without_input_bench.exs")
   end
 
-  @tag :jobs_override
   test "runs benchmark for jobs_override_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"map" => map} = jobs
@@ -289,7 +304,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/jobs_override_bench.exs")
   end
 
-  @tag :jobs_update
   test "runs benchmark for jobs_update_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{"map" => map, "add" => add} = jobs
@@ -304,7 +318,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/jobs_update_bench.exs")
   end
 
-  @tag :before
   test "runs benchmark for before_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{
@@ -335,7 +348,17 @@ defmodule BencheeDslTest do
     assert String.starts_with?(output, "Run: #{file}")
   end
 
+  defp assert_run(file, module) do
+    Code.compile_file(file)
+
+    capture_io(fn ->
+      assert module.run() == :ok
+    end)
+  end
+
   defp benchee_run(jobs, config) do
-    if @benchee_run, do: assert(Benchee.run(jobs, config))
+    if @benchee_run do
+      assert Benchee.run(jobs, config)
+    end
   end
 end
