@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 2022/07/13
+## 0.2.0 2022/07/14
 
 + Add `recode` dependency.
 + Add `BencheeDsl.Benchmark.run/0/1` to run benchmarks in `iex` and `livebook`.
