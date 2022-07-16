@@ -1,4 +1,5 @@
-Code.put_compiler_option(:ignore_module_conflict, true)
+if function_exported?(Code, :put_compiler_option, 2),
+  do: Code.put_compiler_option(:ignore_module_conflict, true)
 
 Mox.defmock(BencheeDsl.BencheeMock, for: BencheeDsl.Benchee)
 
