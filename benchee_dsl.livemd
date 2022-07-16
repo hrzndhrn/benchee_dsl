@@ -1,0 +1,147 @@
+# BencheeDsl - A DSL for Benchee
+
+```elixir
+Mix.install([
+  {:benchee_dsl, "~> 0.1.4"}
+])
+```
+
+## Usage
+
+[BencheeDsl](https://hexdocs.pm/benchee_dsl/readme.html) offers a DSL to write benchmarks for [Benchee](https://github.com/bencheeorg/benchee) in a more Elixir way.
+
+## Define a benchmark
+
+A benchmark is a module that uses `BenceeDsl.Benchmark`. The macro `job/2` defines the functions to benchmark.
+
+```elixir
+defmodule Benchmark.One do
+  use BencheeDsl.Benchmark
+
+  @list Enum.to_list(1..10_000)
+
+  def map_fun(i), do: [i, i * i]
+
+  job flat_map do
+    Enum.flat_map(@list, &map_fun/1)
+  end
+
+  job map_flatten do
+    @list |> Enum.map(&map_fun/1) |> List.flatten()
+  end
+end
+```
+
+## Run benchmark
+
+Benche runs the benchmark and writes the results to the console when the call 'Benchmark.One.run()' is made. See [Benchee/Features](https://github.com/bencheeorg/benchee#features) for a description of the different statistical values and what they mean.
+
+```elixir
+Benchmark.One.run()
+```
+
+## Configuration
+
+Benchee takes a wealth of configuration options, however those are entirely optional. Benchee ships with sensible defaults for all of these, see [Benchee/Configuration](https://github.com/bencheeorg/benchee#configuration). The configuration is passed as a keyword list with `BencheeDsl`.
+
+```elixir
+Benchmark.One.run(warmup: 1, time: 3, print: [configuration: false])
+```
+
+The `config` macro can be used to directly write the configuration into the benchmark.
+
+```elixir
+defmodule Benchmark.Two do
+  use BencheeDsl.Benchmark
+
+  config(warmup: 1, time: 3, print: [configuration: false])
+
+  @list Enum.to_list(1..10_000)
+
+  def map_fun(i), do: [i, i * i]
+
+  job flat_map do
+    Enum.flat_map(@list, &map_fun/1)
+  end
+
+  job map_flatten do
+    @list |> Enum.map(&map_fun/1) |> List.flatten()
+  end
+end
+
+Benchmark.Two.run()
+```
+
+## Metrics to measure
+
+Benchee can't only measure [execution time](https://github.com/bencheeorg/benchee#measuring-time), but also [memory consumption](https://github.com/bencheeorg/benchee#measuring-memory-consumption) and [reductions](https://github.com/bencheeorg/benchee#measuring-reductions)!
+
+You can measure one of these metrics, or all at the same time. The choice is up to you. Warmup will only occur once though, the time for measuring the metrics are governed by time, memory_time and reduction_time configuration values respectively.
+
+By default only execution time is measured, memory and reductions need to be opted in by specifying a non 0 time amount.
+
+```elixir
+Benchmark.Two.run(memory_time: 2, reduction_time: 2)
+```
+
+## Inputs
+
+`:inputs` is a very useful configuration that allows you to run the same benchmarking jobs with different inputs. We call this combination a _"scenario"_. You specify the inputs as either a map from name (String or atom) to the actual input value or a list of tuples where the first element in each tuple is the name and the second element in the tuple is the value.
+
+Why do this? Functions can have different performance characteristics on differently shaped inputs - be that structure or input size. One of such cases is comparing tail-recursive and body-recursive implementations of `map`. More information in the [repository with the benchmark](https://github.com/PragTob/elixir_playground/blob/main/bench/tco_blog_post_focussed_inputs.exs) and the [blog post](https://pragtob.wordpress.com/2016/06/16/tail-call-optimization-in-elixir-erlang-not-as-efficient-and-important-as-you-probably-think/).
+
+```elixir
+defmodule Benchmark.Three do
+  use BencheeDsl.Benchmark
+
+  def map_fun(i), do: [i, i * i]
+
+  job flat_map(input) do
+    Enum.flat_map(input, &map_fun/1)
+  end
+
+  job map_flatten(input) do
+    input |> Enum.map(&map_fun/1) |> List.flatten()
+  end
+end
+
+inputs = %{
+  "Small" => Enum.to_list(1..1_000),
+  "Medium" => Enum.to_list(1..10_000),
+  "Bigger" => Enum.to_list(1..100_000)
+}
+
+Benchmark.Three.run(inputs: inputs, time: 3, pre_check: true)
+```
+
+The `inputs` macro can be used to directly write the inputs into the benchmark.
+
+```elixir
+defmodule Benchmark.Four do
+  use BencheeDsl.Benchmark
+
+  config(time: 3, pre_check: true, print: [configuration: false])
+
+  inputs(%{
+    "Small" => Enum.to_list(1..1_000),
+    "Medium" => Enum.to_list(1..10_000),
+    "Bigger" => Enum.to_list(1..100_000)
+  })
+
+  def map_fun(i), do: [i, i * i]
+
+  job flat_map(input) do
+    Enum.flat_map(input, &map_fun/1)
+  end
+
+  job map_flatten(input) do
+    input |> Enum.map(&map_fun/1) |> List.flatten()
+  end
+end
+
+Benchmark.Four.run()
+```
+
+```elixir
+Benchmark.One.run(warmup: 1, time: 2, profile_after: true)
+```
