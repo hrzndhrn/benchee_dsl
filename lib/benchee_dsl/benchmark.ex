@@ -33,6 +33,16 @@ defmodule BencheeDsl.Benchmark do
   defstruct @keys
 
   @doc """
+  Runs the benchmark.
+  """
+  @callback run() :: :ok
+
+  @doc """
+  Runs the benchmark with the given `config`.
+  """
+  @callback run(config :: keyword()) :: :ok
+
+  @doc """
   Creates a new `Benchmark` struct.
   """
   @spec new(keyword()) :: t()
@@ -56,6 +66,10 @@ defmodule BencheeDsl.Benchmark do
     quote do
       import BencheeDsl.Benchmark
 
+      alias BencheeDsl.Server
+
+      @behaviour BencheeDsl.Benchmark
+
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
@@ -67,6 +81,12 @@ defmodule BencheeDsl.Benchmark do
 
       Module.register_attribute(__MODULE__, :__file__, persist: true)
       Module.put_attribute(__MODULE__, :__file__, __ENV__.file)
+
+      @impl BencheeDsl.Benchmark
+      @spec run(keyword()) :: :ok
+      def run(config \\ []) do
+        Server.run(config, %{include: __MODULE__, run: :iex})
+      end
     end
   end
 
@@ -75,6 +95,7 @@ defmodule BencheeDsl.Benchmark do
   """
   defmacro setup(do: body) do
     quote do
+      @doc false
       def setup, do: unquote(body)
     end
   end
@@ -93,6 +114,7 @@ defmodule BencheeDsl.Benchmark do
   """
   defmacro jobs(do: body) do
     quote do
+      @doc false
       def jobs, do: unquote(body)
     end
   end
@@ -102,6 +124,7 @@ defmodule BencheeDsl.Benchmark do
   """
   defmacro jobs(var, do: body) do
     quote do
+      @doc false
       def jobs(unquote(var)), do: unquote(body)
     end
   end
@@ -112,12 +135,14 @@ defmodule BencheeDsl.Benchmark do
   """
   defmacro inputs(do: inputs) do
     quote do
+      @doc false
       def inputs, do: unquote(inputs)
     end
   end
 
   defmacro inputs(inputs) do
     quote do
+      @doc false
       def inputs, do: unquote(inputs)
     end
   end
@@ -166,6 +191,7 @@ defmodule BencheeDsl.Benchmark do
         before: Module.delete_attribute(__MODULE__, :before)
       )
 
+      @doc false
       def job(unquote(fun_name)) do
         fn unquote(var) -> unquote(body) end
       end
@@ -179,6 +205,7 @@ defmodule BencheeDsl.Benchmark do
         before: Module.delete_attribute(__MODULE__, :before)
       )
 
+      @doc false
       def job(unquote(fun_name)) do
         fn -> unquote(body) end
       end
@@ -192,6 +219,7 @@ defmodule BencheeDsl.Benchmark do
         before: Module.delete_attribute(__MODULE__, :before)
       )
 
+      @doc false
       def job(unquote(fun_name)) do
         fn -> apply(unquote(body), []) end
       end
@@ -205,6 +233,7 @@ defmodule BencheeDsl.Benchmark do
         before: Module.delete_attribute(__MODULE__, :before)
       )
 
+      @doc false
       def job(unquote(fun_name)) do
         fn input -> apply(unquote(body), input) end
       end

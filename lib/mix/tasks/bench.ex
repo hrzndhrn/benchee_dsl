@@ -6,6 +6,7 @@ defmodule Mix.Tasks.Bench do
   use Mix.Task
 
   @shortdoc "Start and runs the benchmarks"
+  @impl Mix.Task
   def run(opts) do
     Mix.Task.run("compile")
     Application.put_env(:benchee_dsl, :cli_args, opts)

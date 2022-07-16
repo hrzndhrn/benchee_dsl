@@ -36,6 +36,7 @@ defmodule Mix.Tasks.Bench.Gen do
   """
 
   @shortdoc "Generates basic benchmark structure"
+  @impl Mix.Task
   def run(_) do
     case File.exists?(@default_path) do
       true ->

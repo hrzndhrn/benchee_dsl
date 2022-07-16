@@ -11,6 +11,7 @@ defmodule BencheeDsl do
   @doc """
   Runs the benchmarks.
   """
+  @spec run(keyword()) :: :ok
   def run(config \\ []) do
     Server.path()
     |> benchmarks()
@@ -24,6 +25,7 @@ defmodule BencheeDsl do
   @doc """
   Configures `benchee`.
   """
+  @spec config(keyword()) :: :ok
   def config(config), do: Server.register(:config, config)
 
   defp benchmarks(path, benchmarks \\ [])

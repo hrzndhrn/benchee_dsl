@@ -3,10 +3,17 @@ defmodule BencheeDsl.Runner do
 
   alias BencheeDsl.Benchmark
 
+  def run(module, opts, config, dsl_config, %{run: :iex} = cli_args) do
+    case included?(module, cli_args) do
+      true -> run(module, opts, config, dsl_config)
+      false -> :ok
+    end
+  end
+
   def run(module, opts, config, dsl_config, cli_args) do
     file = get_attr(module, :__file__)
 
-    case included?(file, cli_args) do
+    case included?(module, cli_args) do
       true ->
         IO.write("Run: #{Path.relative_to_cwd(file)}\n")
         run(module, opts, config, dsl_config)
@@ -43,15 +50,15 @@ defmodule BencheeDsl.Runner do
     Application.get_env(:benchee_dsl, :benchee).run(jobs, config)
   end
 
-  defp included?(file, cli_args) do
-    case Map.fetch(cli_args, :include) do
-      {:ok, include} ->
-        String.ends_with?(file, include)
-
-      :error ->
-        true
-    end
+  defp included?(module, %{include: include}) when is_atom(include) do
+    module == include
   end
+
+  defp included?(module, %{include: include}) when is_binary(include) do
+    module |> get_attr(:__file__) |> String.ends_with?(include)
+  end
+
+  defp included?(_module, _cli_args), do: true
 
   defp config(opts, config, module) do
     config
