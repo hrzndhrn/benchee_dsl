@@ -146,14 +146,14 @@ defmodule BencheeDsl.Runner do
 
   defp job_opts(opts) do
     []
-    |> hooks(opts, :setup, :before_scenario)
-    |> hooks(opts, :setup_each, :before_each)
-    |> hooks(opts, :on_exit, :after_scenario)
-    |> hooks(opts, :on_exit_each, :after_each)
+    |> hooks(opts, :before_scenario)
+    |> hooks(opts, :before_each)
+    |> hooks(opts, :after_scenario)
+    |> hooks(opts, :after_each)
   end
 
-  defp hooks(hooks, opts, tag, key) do
-    case Keyword.get(opts, tag) do
+  defp hooks(hooks, opts, key) do
+    case Keyword.get(opts, key) do
       nil -> hooks
       fun -> Keyword.put(hooks, key, hook(fun))
     end

@@ -2,11 +2,7 @@
 
 ## 0.2.0 - dev
 
-+ Add local hooks (`@setup`, `@setup_each`, `@on_exit`, `@on_exit_each`)
-
-### Breaking changes
-
-+ Replace `@before` with `@setup`.
++ Add local hooks (`@before_scenario`, `@before_each`, `@after_scenario`, `@after_each`)
 
 ## 0.1.4 2022/07/16
 

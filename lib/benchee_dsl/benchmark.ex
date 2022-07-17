@@ -73,11 +73,12 @@ defmodule BencheeDsl.Benchmark do
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
-      Module.register_attribute(__MODULE__, :on_exit, persist: true)
-      Module.register_attribute(__MODULE__, :on_exit_each, persist: true)
-      Module.register_attribute(__MODULE__, :setup, persist: true)
-      Module.register_attribute(__MODULE__, :setup_each, persist: true)
       Module.register_attribute(__MODULE__, :tag, accumulate: true)
+
+      Module.register_attribute(__MODULE__, :after_scenario, persist: true)
+      Module.register_attribute(__MODULE__, :after_each, persist: true)
+      Module.register_attribute(__MODULE__, :before_scenario, persist: true)
+      Module.register_attribute(__MODULE__, :before_each, persist: true)
 
       Module.register_attribute(__MODULE__, :__dir__, persist: true)
       Module.put_attribute(__MODULE__, :__dir__, __DIR__)
@@ -234,10 +235,10 @@ defmodule BencheeDsl.Benchmark do
   defp register_job(fun_name) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name),
-        on_exit: Module.delete_attribute(__MODULE__, :on_exit),
-        on_exit_each: Module.delete_attribute(__MODULE__, :on_exit_each),
-        setup: Module.delete_attribute(__MODULE__, :setup),
-        setup_each: Module.delete_attribute(__MODULE__, :setup_each),
+        after_each: Module.delete_attribute(__MODULE__, :after_each),
+        after_scenario: Module.delete_attribute(__MODULE__, :after_scenario),
+        before_each: Module.delete_attribute(__MODULE__, :before_each),
+        before_scenario: Module.delete_attribute(__MODULE__, :before_scenario),
         tags: Module.delete_attribute(__MODULE__, :tag)
       )
     end

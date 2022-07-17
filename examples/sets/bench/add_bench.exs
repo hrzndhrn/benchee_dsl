@@ -24,13 +24,13 @@ defmodule AddBench do
     }
   end
 
-  @setup fn [arg1, arg2] -> [arg1, :gb_sets.from_list(arg2)] end
+  @before_scenario fn [arg1, arg2] -> [arg1, :gb_sets.from_list(arg2)] end
   job &:gb_sets.add_element/2
 
   @tag :skip
-  @setup fn [arg1, arg2] -> [arg1, :sets.from_list(arg2)] end
+  @before_scenario fn [arg1, arg2] -> [arg1, :sets.from_list(arg2)] end
   job &:sets.add_element/2
 
-  @setup fn [arg1, arg2] -> [arg1, :ordsets.from_list(arg2)] end
+  @before_scenario fn [arg1, arg2] -> [arg1, :ordsets.from_list(arg2)] end
   job &:ordsets.add_element/2
 end
