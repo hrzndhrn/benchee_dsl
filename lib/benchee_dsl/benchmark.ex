@@ -72,6 +72,8 @@ defmodule BencheeDsl.Benchmark do
 
       @before_compile BencheeDsl.Benchmark
 
+      Module.register_attribute(__MODULE__, :jobs, accumulate: true)
+
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
@@ -201,6 +203,8 @@ defmodule BencheeDsl.Benchmark do
     quote do
       unquote(register_job(fun_name))
 
+      @jobs {unquote(fun_name), fn unquote(var) -> unquote(body) end}
+
       @doc false
       def job(unquote(fun_name)) do
         fn unquote(var) -> unquote(body) end
@@ -211,6 +215,8 @@ defmodule BencheeDsl.Benchmark do
   defp quote_job(fun_name, body) do
     quote do
       unquote(register_job(fun_name))
+
+      @jobs {unquote(fun_name), fn -> unquote(body) end}
 
       @doc false
       def job(unquote(fun_name)) do
@@ -223,6 +229,8 @@ defmodule BencheeDsl.Benchmark do
     quote do
       unquote(register_job(fun_name))
 
+      @jobs {unquote(fun_name), fn -> apply(unquote(body), []) end}
+
       @doc false
       def job(unquote(fun_name)) do
         fn -> apply(unquote(body), []) end
@@ -233,6 +241,8 @@ defmodule BencheeDsl.Benchmark do
   defp quote_job_apply(fun_name, body, _arity) do
     quote do
       unquote(register_job(fun_name))
+
+      @jobs {unquote(fun_name), fn input -> apply(unquote(body), input) end}
 
       @doc false
       def job(unquote(fun_name)) do
