@@ -155,9 +155,8 @@ defmodule BencheeDslTest do
       end
     )
 
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == "Run: test/fixtures/attr_bench.exs\n\n"
+    output = capture_io(fn -> assert BencheeDsl.run() end)
+    assert output =~ "Run: test/fixtures/attr_bench.exs"
   end
 
   test "runs benchmark for setup_bench.exs" do
@@ -232,16 +231,11 @@ defmodule BencheeDslTest do
              end
            )
 
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == """
-           Run: test/fixtures/math/add_bench.exs
+    output = capture_io(fn -> assert BencheeDsl.run() end)
 
-           Run: test/fixtures/math/complex/add_bench.exs
-
-           Run: test/fixtures/math/sub_bench.exs
-
-           """
+    assert output =~ "Run: test/fixtures/math/add_bench.exs"
+    assert output =~ "Run: test/fixtures/math/complex/add_bench.exs"
+    assert output =~ "Run: test/fixtures/math/sub_bench.exs"
   end
 
   test "runs benchmark for delegate_bench.exs" do
