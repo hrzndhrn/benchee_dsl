@@ -180,8 +180,8 @@ defmodule DelegateBench do
 end
 ```
 
-### @before
-Jobs tagged with `@before` are getting a function to transform the input. The
+### @setup
+Jobs tagged with `%setup` are getting a function to transform the input. The
 following example can be found at `example/sets`.
 
 ```elixir
@@ -211,14 +211,14 @@ defmodule AddBench do
     }
   end
 
-  @before fn [arg1, arg2] -> [arg1, :gb_sets.from_list(arg2)] end
+  %setup fn [arg1, arg2] -> [arg1, :gb_sets.from_list(arg2)] end
   job &:gb_sets.add_element/2
 
   @tag :skip
-  @before fn [arg1, arg2] -> [arg1, :sets.from_list(arg2)] end
+  %setup fn [arg1, arg2] -> [arg1, :sets.from_list(arg2)] end
   job &:sets.add_element/2
 
-  @before fn [arg1, arg2] -> [arg1, :ordsets.from_list(arg2)] end
+  %setup fn [arg1, arg2] -> [arg1, :ordsets.from_list(arg2)] end
   job &:ordsets.add_element/2
 end
 ```
