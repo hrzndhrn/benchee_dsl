@@ -73,8 +73,11 @@ defmodule BencheeDsl.Benchmark do
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
+      Module.register_attribute(__MODULE__, :on_exit, persist: true)
+      Module.register_attribute(__MODULE__, :on_exit_each, persist: true)
+      Module.register_attribute(__MODULE__, :setup, persist: true)
+      Module.register_attribute(__MODULE__, :setup_each, persist: true)
       Module.register_attribute(__MODULE__, :tag, accumulate: true)
-      Module.register_attribute(__MODULE__, :before, persist: true)
 
       Module.register_attribute(__MODULE__, :__dir__, persist: true)
       Module.put_attribute(__MODULE__, :__dir__, __DIR__)
@@ -186,10 +189,7 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job(fun_name, var, body) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
@@ -200,10 +200,7 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job(fun_name, body) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
@@ -214,10 +211,7 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job_apply(fun_name, body, 0) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
@@ -228,15 +222,24 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job_apply(fun_name, body, _arity) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
         fn input -> apply(unquote(body), input) end
       end
+    end
+  end
+
+  defp register_job(fun_name) do
+    quote do
+      Server.register(:job, __MODULE__, unquote(fun_name),
+        on_exit: Module.delete_attribute(__MODULE__, :on_exit),
+        on_exit_each: Module.delete_attribute(__MODULE__, :on_exit_each),
+        setup: Module.delete_attribute(__MODULE__, :setup),
+        setup_each: Module.delete_attribute(__MODULE__, :setup_each),
+        tags: Module.delete_attribute(__MODULE__, :tag)
+      )
     end
   end
 

@@ -141,7 +141,3 @@ end
 
 Benchmark.Four.run()
 ```
-
-```elixir
-Benchmark.One.run(warmup: 1, time: 2, profile_after: true)
-```
