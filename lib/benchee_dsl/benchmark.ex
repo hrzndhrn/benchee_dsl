@@ -70,6 +70,8 @@ defmodule BencheeDsl.Benchmark do
 
       @behaviour BencheeDsl.Benchmark
 
+      @before_compile BencheeDsl.Benchmark
+
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
@@ -91,6 +93,13 @@ defmodule BencheeDsl.Benchmark do
       def run(config \\ []) do
         Server.run(config, %{include: __MODULE__, run: :iex})
       end
+    end
+  end
+
+  defmacro __before_compile__(_env) do
+    quote do
+      @doc false
+      def hook(_name), do: nil
     end
   end
 
@@ -250,6 +259,86 @@ defmodule BencheeDsl.Benchmark do
   defmacro formatter(module, opts) do
     quote do
       Server.register(:formatter, __MODULE__, {unquote(module), unquote(opts)})
+    end
+  end
+
+  @doc """
+  Defines a `before_scenario` hook.
+  """
+  defmacro before_scenario(do: body) do
+    quote do
+      @doc false
+      def hook(:before_scenario), do: fn _inputs -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `before_scenario` hook.
+  """
+  defmacro before_scenario(var, do: body) do
+    quote do
+      @doc false
+      def hook(:before_scenario), do: fn unquote(var) -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `after_scenario` hook.
+  """
+  defmacro after_scenario(do: body) do
+    quote do
+      @doc false
+      def hook(:after_scenario), do: fn _inputs -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `after_scenario` hook.
+  """
+  defmacro after_scenario(var, do: body) do
+    quote do
+      @doc false
+      def hook(:after_scenario), do: fn unquote(var) -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `before_each` hook.
+  """
+  defmacro before_each(do: body) do
+    quote do
+      @doc false
+      def hook(:before_each), do: fn _inputs -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `before_each` hook.
+  """
+  defmacro before_each(var, do: body) do
+    quote do
+      @doc false
+      def hook(:before_each), do: fn unquote(var) -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `after_each` hook.
+  """
+  defmacro after_each(do: body) do
+    quote do
+      @doc false
+      def hook(:after_each), do: fn _inputs -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `after_each` hook.
+  """
+  defmacro after_each(var, do: body) do
+    quote do
+      @doc false
+      def hook(:after_each), do: fn unquote(var) -> unquote(body) end
     end
   end
 end

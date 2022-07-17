@@ -314,7 +314,7 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/jobs_update_bench.exs")
   end
 
-  test "runs benchmark for hooks_bench.exs" do
+  test "runs benchmark for local_hooks_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{
                "flat_map" => {flat_map, flat_map_hooks},
@@ -340,7 +340,33 @@ defmodule BencheeDslTest do
       benchee_run(jobs, config)
     end)
 
-    assert_run("test/fixtures/hooks_bench.exs")
+    assert_run("test/fixtures/local_hooks_bench.exs")
+  end
+
+  test "runs benchmark for global_hooks_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert is_function(config[:after_each], 1)
+      assert is_function(config[:after_scenario], 1)
+      assert is_function(config[:before_each], 1)
+      assert is_function(config[:before_scenario], 1)
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/global_hooks_bench.exs")
+  end
+
+  test "runs benchmark for global_hooks_zero_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert is_function(config[:after_each], 1)
+      assert is_function(config[:after_scenario], 1)
+      assert is_function(config[:before_each], 1)
+      assert is_function(config[:before_scenario], 1)
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/global_hooks_zero_bench.exs")
   end
 
   defp assert_run(file) do

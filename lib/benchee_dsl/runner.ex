@@ -65,6 +65,18 @@ defmodule BencheeDsl.Runner do
     |> Keyword.merge(Map.get(opts, :config, []))
     |> inputs(module)
     |> formatters(Map.get(opts, :formatters, []))
+    |> global_hooks(module, [:after_each, :after_scenario, :before_each, :before_scenario])
+  end
+
+  defp global_hooks(config, module, keys) do
+    Enum.reduce(keys, config, fn key, acc -> global_hook(acc, module, key) end)
+  end
+
+  defp global_hook(config, module, key) do
+    case module.hook(key) do
+      nil -> config
+      fun -> Keyword.put(config, key, fun)
+    end
   end
 
   defp before_each_benchmark(benchmark, config) do
@@ -146,13 +158,13 @@ defmodule BencheeDsl.Runner do
 
   defp job_opts(opts) do
     []
-    |> hooks(opts, :before_scenario)
-    |> hooks(opts, :before_each)
-    |> hooks(opts, :after_scenario)
-    |> hooks(opts, :after_each)
+    |> local_hooks(opts, :before_scenario)
+    |> local_hooks(opts, :before_each)
+    |> local_hooks(opts, :after_scenario)
+    |> local_hooks(opts, :after_each)
   end
 
-  defp hooks(hooks, opts, key) do
+  defp local_hooks(hooks, opts, key) do
     case Keyword.get(opts, key) do
       nil -> hooks
       fun -> Keyword.put(hooks, key, hook(fun))
