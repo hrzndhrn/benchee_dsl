@@ -268,7 +268,12 @@ defmodule BencheeDsl.Benchmark do
   defmacro before_scenario(do: body) do
     quote do
       @doc false
-      def hook(:before_scenario), do: fn _inputs -> unquote(body) end
+      def hook(:before_scenario) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
     end
   end
 
@@ -288,7 +293,12 @@ defmodule BencheeDsl.Benchmark do
   defmacro after_scenario(do: body) do
     quote do
       @doc false
-      def hook(:after_scenario), do: fn _inputs -> unquote(body) end
+      def hook(:after_scenario) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
     end
   end
 
@@ -308,7 +318,12 @@ defmodule BencheeDsl.Benchmark do
   defmacro before_each(do: body) do
     quote do
       @doc false
-      def hook(:before_each), do: fn _inputs -> unquote(body) end
+      def hook(:before_each) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
     end
   end
 
@@ -328,7 +343,12 @@ defmodule BencheeDsl.Benchmark do
   defmacro after_each(do: body) do
     quote do
       @doc false
-      def hook(:after_each), do: fn _inputs -> unquote(body) end
+      def hook(:after_each) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
     end
   end
 

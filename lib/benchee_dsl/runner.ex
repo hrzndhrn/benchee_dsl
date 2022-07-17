@@ -174,9 +174,9 @@ defmodule BencheeDsl.Runner do
   defp hook(fun) do
     case Function.info(fun, :arity) do
       {:arity, 0} ->
-        fn x ->
+        fn arg ->
           fun.()
-          x
+          arg
         end
 
       {:arity, 1} ->
