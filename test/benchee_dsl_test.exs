@@ -256,7 +256,9 @@ defmodule BencheeDslTest do
 
       assert Keyword.equal?(config,
                inputs: %{"bigger" => [1, 100_000], "medium" => [1, 10_000], "small" => [1, 100]},
-               formatters: [Benchee.Formatters.Console]
+               formatters: [Benchee.Formatters.Console],
+               warmup: 0,
+               time: 1
              )
 
       benchee_run(jobs, config)
