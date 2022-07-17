@@ -25,6 +25,8 @@ defmodule DelegateBench do
 
   import Foo
 
+  config warmup: 0, time: 1
+
   inputs %{
     "small" => [1, 100],
     "medium" => [1, 10_000],
