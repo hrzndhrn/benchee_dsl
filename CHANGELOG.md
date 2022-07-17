@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.2.0 - dev
+## 0.1.5 - 2022/07/17
 
 + Add local hooks (`@before_scenario`, `@before_each`, `@after_scenario`, `@after_each`)
++ Overwrite benchmark config when running `BencheeDsl.Benchmark.run/1`.
 
 ## 0.1.4 2022/07/16
 
