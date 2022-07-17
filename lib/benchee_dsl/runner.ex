@@ -65,6 +65,18 @@ defmodule BencheeDsl.Runner do
     |> Keyword.merge(Map.get(opts, :config, []))
     |> inputs(module)
     |> formatters(Map.get(opts, :formatters, []))
+    |> global_hooks(module, [:after_each, :after_scenario, :before_each, :before_scenario])
+  end
+
+  defp global_hooks(config, module, keys) do
+    Enum.reduce(keys, config, fn key, acc -> global_hook(acc, module, key) end)
+  end
+
+  defp global_hook(config, module, key) do
+    case module.hook(key) do
+      nil -> config
+      fun -> Keyword.put(config, key, fun)
+    end
   end
 
   defp before_each_benchmark(benchmark, config) do
@@ -130,28 +142,41 @@ defmodule BencheeDsl.Runner do
   defp jobs(module, %{jobs: jobs}) do
     Enum.reduce(jobs, %{}, fn {job, opts}, acc ->
       tags = Keyword.get(opts, :tags)
-      before = opts |> Keyword.get(:before) |> before()
       name = to_string(job)
       fun = module.job(job)
+      job_opts = job_opts(opts)
 
-      case {Enum.member?(tags, :skip), before} do
+      case {Enum.member?(tags, :skip), job_opts} do
         {true, _} -> acc
-        {false, nil} -> Map.put(acc, name, fun)
-        {false, before} -> Map.put(acc, name, {fun, before_scenario: before})
+        {false, []} -> Map.put(acc, name, fun)
+        {false, job_opts} -> Map.put(acc, name, {fun, job_opts})
       end
     end)
   end
 
   defp jobs(_, _), do: %{}
 
-  defp before(nil), do: nil
+  defp job_opts(opts) do
+    []
+    |> local_hooks(opts, :before_scenario)
+    |> local_hooks(opts, :before_each)
+    |> local_hooks(opts, :after_scenario)
+    |> local_hooks(opts, :after_each)
+  end
 
-  defp before(fun) do
+  defp local_hooks(hooks, opts, key) do
+    case Keyword.get(opts, key) do
+      nil -> hooks
+      fun -> Keyword.put(hooks, key, hook(fun))
+    end
+  end
+
+  defp hook(fun) do
     case Function.info(fun, :arity) do
       {:arity, 0} ->
-        fn x ->
+        fn arg ->
           fun.()
-          x
+          arg
         end
 
       {:arity, 1} ->

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 - dev
+
++ Add local hooks (`@before_scenario`, `@before_each`, `@after_scenario`, `@after_each`)
+
 ## 0.1.4 2022/07/16
 
 + Add `recode` dependency.

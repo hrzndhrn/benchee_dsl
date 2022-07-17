@@ -70,11 +70,17 @@ defmodule BencheeDsl.Benchmark do
 
       @behaviour BencheeDsl.Benchmark
 
+      @before_compile BencheeDsl.Benchmark
+
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
       Module.register_attribute(__MODULE__, :tag, accumulate: true)
-      Module.register_attribute(__MODULE__, :before, persist: true)
+
+      Module.register_attribute(__MODULE__, :after_scenario, persist: true)
+      Module.register_attribute(__MODULE__, :after_each, persist: true)
+      Module.register_attribute(__MODULE__, :before_scenario, persist: true)
+      Module.register_attribute(__MODULE__, :before_each, persist: true)
 
       Module.register_attribute(__MODULE__, :__dir__, persist: true)
       Module.put_attribute(__MODULE__, :__dir__, __DIR__)
@@ -87,6 +93,13 @@ defmodule BencheeDsl.Benchmark do
       def run(config \\ []) do
         Server.run(config, %{include: __MODULE__, run: :iex})
       end
+    end
+  end
+
+  defmacro __before_compile__(_env) do
+    quote do
+      @doc false
+      def hook(_name), do: nil
     end
   end
 
@@ -186,10 +199,7 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job(fun_name, var, body) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
@@ -200,10 +210,7 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job(fun_name, body) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
@@ -214,10 +221,7 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job_apply(fun_name, body, 0) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
@@ -228,15 +232,24 @@ defmodule BencheeDsl.Benchmark do
 
   defp quote_job_apply(fun_name, body, _arity) do
     quote do
-      Server.register(:job, __MODULE__, unquote(fun_name),
-        tags: Module.delete_attribute(__MODULE__, :tag),
-        before: Module.delete_attribute(__MODULE__, :before)
-      )
+      unquote(register_job(fun_name))
 
       @doc false
       def job(unquote(fun_name)) do
         fn input -> apply(unquote(body), input) end
       end
+    end
+  end
+
+  defp register_job(fun_name) do
+    quote do
+      Server.register(:job, __MODULE__, unquote(fun_name),
+        after_each: Module.delete_attribute(__MODULE__, :after_each),
+        after_scenario: Module.delete_attribute(__MODULE__, :after_scenario),
+        before_each: Module.delete_attribute(__MODULE__, :before_each),
+        before_scenario: Module.delete_attribute(__MODULE__, :before_scenario),
+        tags: Module.delete_attribute(__MODULE__, :tag)
+      )
     end
   end
 
@@ -246,6 +259,106 @@ defmodule BencheeDsl.Benchmark do
   defmacro formatter(module, opts) do
     quote do
       Server.register(:formatter, __MODULE__, {unquote(module), unquote(opts)})
+    end
+  end
+
+  @doc """
+  Defines a `before_scenario` hook.
+  """
+  defmacro before_scenario(do: body) do
+    quote do
+      @doc false
+      def hook(:before_scenario) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
+    end
+  end
+
+  @doc """
+  Defines a `before_scenario` hook.
+  """
+  defmacro before_scenario(var, do: body) do
+    quote do
+      @doc false
+      def hook(:before_scenario), do: fn unquote(var) -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `after_scenario` hook.
+  """
+  defmacro after_scenario(do: body) do
+    quote do
+      @doc false
+      def hook(:after_scenario) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
+    end
+  end
+
+  @doc """
+  Defines a `after_scenario` hook.
+  """
+  defmacro after_scenario(var, do: body) do
+    quote do
+      @doc false
+      def hook(:after_scenario), do: fn unquote(var) -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `before_each` hook.
+  """
+  defmacro before_each(do: body) do
+    quote do
+      @doc false
+      def hook(:before_each) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
+    end
+  end
+
+  @doc """
+  Defines a `before_each` hook.
+  """
+  defmacro before_each(var, do: body) do
+    quote do
+      @doc false
+      def hook(:before_each), do: fn unquote(var) -> unquote(body) end
+    end
+  end
+
+  @doc """
+  Defines a `after_each` hook.
+  """
+  defmacro after_each(do: body) do
+    quote do
+      @doc false
+      def hook(:after_each) do
+        fn inputs ->
+          unquote(body)
+          inputs
+        end
+      end
+    end
+  end
+
+  @doc """
+  Defines a `after_each` hook.
+  """
+  defmacro after_each(var, do: body) do
+    quote do
+      @doc false
+      def hook(:after_each), do: fn unquote(var) -> unquote(body) end
     end
   end
 end

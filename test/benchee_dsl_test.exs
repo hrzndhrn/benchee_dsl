@@ -155,9 +155,8 @@ defmodule BencheeDslTest do
       end
     )
 
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == "Run: test/fixtures/attr_bench.exs\n\n"
+    output = capture_io(fn -> assert BencheeDsl.run() end)
+    assert output =~ "Run: test/fixtures/attr_bench.exs"
   end
 
   test "runs benchmark for setup_bench.exs" do
@@ -232,16 +231,11 @@ defmodule BencheeDslTest do
              end
            )
 
-    assert capture_io(fn ->
-             assert BencheeDsl.run()
-           end) == """
-           Run: test/fixtures/math/add_bench.exs
+    output = capture_io(fn -> assert BencheeDsl.run() end)
 
-           Run: test/fixtures/math/complex/add_bench.exs
-
-           Run: test/fixtures/math/sub_bench.exs
-
-           """
+    assert output =~ "Run: test/fixtures/math/add_bench.exs"
+    assert output =~ "Run: test/fixtures/math/complex/add_bench.exs"
+    assert output =~ "Run: test/fixtures/math/sub_bench.exs"
   end
 
   test "runs benchmark for delegate_bench.exs" do
@@ -262,7 +256,9 @@ defmodule BencheeDslTest do
 
       assert Keyword.equal?(config,
                inputs: %{"bigger" => [1, 100_000], "medium" => [1, 10_000], "small" => [1, 100]},
-               formatters: [Benchee.Formatters.Console]
+               formatters: [Benchee.Formatters.Console],
+               warmup: 0,
+               time: 1
              )
 
       benchee_run(jobs, config)
@@ -318,23 +314,59 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/jobs_update_bench.exs")
   end
 
-  test "runs benchmark for before_bench.exs" do
+  test "runs benchmark for local_hooks_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{
-               "flat_map" => {flat_map, before_scenario: flat_map_before},
-               "map.flatten" => {map_flatten, before_scenario: map_flatten_before}
+               "flat_map" => {flat_map, flat_map_hooks},
+               "map_flatten" => {map_flatten, map_flatten_hooks}
              } = jobs
 
       assert is_function(flat_map, 1)
-      assert is_function(flat_map_before, 1)
+      assert is_function(flat_map_hooks[:before_scenario], 1)
+      assert flat_map_hooks[:before_scenario].([1, 2]) == 1..2
+      assert is_function(flat_map_hooks[:before_each], 1)
+      assert flat_map_hooks[:before_each].(:in) == :in
+      assert is_function(flat_map_hooks[:after_scenario], 1)
+      assert is_function(flat_map_hooks[:after_each], 1)
+
       assert is_function(map_flatten, 1)
-      assert is_function(map_flatten_before, 1)
-      assert map_flatten_before.(:in) == :in
+      assert is_function(map_flatten_hooks[:before_scenario], 1)
+      assert map_flatten_hooks[:before_scenario].(:in) == :in
+      assert is_function(map_flatten_hooks[:before_each], 1)
+      assert map_flatten_hooks[:before_each].(:in) == :in
+      assert is_function(map_flatten_hooks[:after_scenario], 1)
+      assert is_function(map_flatten_hooks[:after_each], 1)
 
       benchee_run(jobs, config)
     end)
 
-    assert_run("test/fixtures/before_bench.exs")
+    assert_run("test/fixtures/local_hooks_bench.exs")
+  end
+
+  test "runs benchmark for global_hooks_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert is_function(config[:after_each], 1)
+      assert is_function(config[:after_scenario], 1)
+      assert is_function(config[:before_each], 1)
+      assert is_function(config[:before_scenario], 1)
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/global_hooks_bench.exs")
+  end
+
+  test "runs benchmark for global_hooks_zero_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert is_function(config[:after_each], 1)
+      assert is_function(config[:after_scenario], 1)
+      assert is_function(config[:before_each], 1)
+      assert is_function(config[:before_scenario], 1)
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/global_hooks_zero_bench.exs")
   end
 
   defp assert_run(file) do
@@ -357,8 +389,6 @@ defmodule BencheeDslTest do
   end
 
   defp benchee_run(jobs, config) do
-    if @benchee_run do
-      assert Benchee.run(jobs, config)
-    end
+    if @benchee_run, do: assert(Benchee.run(jobs, config))
   end
 end
