@@ -327,7 +327,7 @@ defmodule BencheeDslTest do
 
       assert is_function(flat_map, 1)
       assert is_function(flat_map_hooks[:before_scenario], 1)
-      assert flat_map_hooks[:before_scenario].([1,2]) == 1..2
+      assert flat_map_hooks[:before_scenario].([1, 2]) == 1..2
       assert is_function(flat_map_hooks[:before_each], 1)
       assert flat_map_hooks[:before_each].(:in) == :in
       assert is_function(flat_map_hooks[:after_scenario], 1)
@@ -346,7 +346,6 @@ defmodule BencheeDslTest do
 
     assert_run("test/fixtures/hooks_bench.exs")
   end
-
 
   defp assert_run(file) do
     assert BencheeDsl.config(file: file)
@@ -368,6 +367,6 @@ defmodule BencheeDslTest do
   end
 
   defp benchee_run(jobs, config) do
-    if @benchee_run, do: assert Benchee.run(jobs, config)
+    if @benchee_run, do: assert(Benchee.run(jobs, config))
   end
 end
