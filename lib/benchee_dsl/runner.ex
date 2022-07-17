@@ -4,6 +4,8 @@ defmodule BencheeDsl.Runner do
   alias BencheeDsl.Benchmark
 
   def run(module, opts, config, dsl_config, %{run: :iex} = cli_args) do
+    opts = Map.update(opts, :config, [], fn opts_config -> Keyword.merge(opts_config, config) end)
+
     case included?(module, cli_args) do
       true -> run(module, opts, config, dsl_config)
       false -> :ok

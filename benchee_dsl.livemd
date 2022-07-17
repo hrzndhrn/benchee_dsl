@@ -54,7 +54,7 @@ The `config` macro can be used to directly write the configuration into the benc
 defmodule Benchmark.Two do
   use BencheeDsl.Benchmark
 
-  config(warmup: 1, time: 3, print: [configuration: false])
+  config warmup: 1, time: 3, print: [configuration: false]
 
   @list Enum.to_list(1..10_000)
 
@@ -120,7 +120,7 @@ The `inputs` macro can be used to directly write the inputs into the benchmark.
 defmodule Benchmark.Four do
   use BencheeDsl.Benchmark
 
-  config(time: 3, pre_check: true, print: [configuration: false])
+  config time: 3, pre_check: true, print: [configuration: false]
 
   inputs(%{
     "Small" => Enum.to_list(1..1_000),
