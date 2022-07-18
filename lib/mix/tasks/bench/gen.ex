@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Bench.Gen do
   defmodule ExampleBench do
     use BencheeDsl.Benchmark
 
-    config time: 1
+    config time: 3
 
     inputs %{
       "Small" => Enum.to_list(1..1_000),
@@ -23,15 +23,15 @@ defmodule Mix.Tasks.Bench.Gen do
       "Bigger" => Enum.to_list(1..100_000)
     }
 
+    map = fn i -> [i, i * i] end
+
     job flat_map(input) do
-      Enum.flat_map(input, &map_fun/1)
+      Enum.flat_map(input, map_fun)
     end
 
     job map_flatten(input) do
-      input |> Enum.map(&map_fun/1) |> List.flatten()
+      input |> Enum.map(map_fun) |> List.flatten()
     end
-
-    def map_fun(i), do: [i, i * i]
   end
   """
 
