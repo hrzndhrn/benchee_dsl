@@ -2,9 +2,11 @@
 
 ## 0.2.0 - dev
 
-This version comes with a lot of breaking changes.
+### Breaking changes
 
-+ Remove macros `BencheDsl.Benchmark.jobs/0/1`.
++ Update `BencheeDsl.Benchmark.job`. The job macro no longer defines a function.
+  The macro now generates an anonymous function that is managed by BencheeDsl.
++ Remove macros `BencheeDsl.Benchmark.jobs/0/1`.
 
 ## 0.1.5 - 2022/07/17
 
