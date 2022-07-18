@@ -248,6 +248,7 @@ defmodule ExampleBench do
   }
 
   map_fun = fn i -> [i, i * i] end
+
   job flat_map(input) do
     Enum.flat_map(input, map_fun)
   end
