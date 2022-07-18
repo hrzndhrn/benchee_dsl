@@ -33,21 +33,9 @@ defmodule BencheeDsl.Runner do
       |> benchmark(module)
       |> before_each_benchmark(dsl_config)
 
-    jobs =
-      case function_exported?(module, :jobs, 0) do
-        true -> module.jobs()
-        false -> jobs(module, opts)
-      end
+    jobs = jobs(opts)
 
-    jobs =
-      case function_exported?(module, :jobs, 1) do
-        true -> module.jobs(jobs)
-        false -> jobs
-      end
-
-    if function_exported?(module, :setup, 0) do
-      module.setup()
-    end
+    if function_exported?(module, :setup, 0), do: module.setup()
 
     Application.get_env(:benchee_dsl, :benchee).run(jobs, config)
   end
@@ -67,18 +55,6 @@ defmodule BencheeDsl.Runner do
     |> Keyword.merge(Map.get(opts, :config, []))
     |> inputs(module)
     |> formatters(Map.get(opts, :formatters, []))
-    |> global_hooks(module, [:after_each, :after_scenario, :before_each, :before_scenario])
-  end
-
-  defp global_hooks(config, module, keys) do
-    Enum.reduce(keys, config, fn key, acc -> global_hook(acc, module, key) end)
-  end
-
-  defp global_hook(config, module, key) do
-    case module.hook(key) do
-      nil -> config
-      fun -> Keyword.put(config, key, fun)
-    end
   end
 
   defp before_each_benchmark(benchmark, config) do
@@ -141,11 +117,11 @@ defmodule BencheeDsl.Runner do
 
   defp get_attr(module, key), do: get_attr(module.__info__(:attributes)[key])
 
-  defp jobs(module, %{jobs: jobs}) do
+  defp jobs(%{jobs: jobs}) do
     Enum.reduce(jobs, %{}, fn {job, opts}, acc ->
       tags = Keyword.get(opts, :tags)
       name = to_string(job)
-      fun = module.job(job)
+      fun = Keyword.get(opts, :fun)
       job_opts = job_opts(opts)
 
       case {Enum.member?(tags, :skip), job_opts} do
@@ -156,7 +132,7 @@ defmodule BencheeDsl.Runner do
     end)
   end
 
-  defp jobs(_, _), do: %{}
+  defp jobs(_), do: %{}
 
   defp job_opts(opts) do
     []

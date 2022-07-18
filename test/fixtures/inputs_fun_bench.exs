@@ -13,15 +13,15 @@ defmodule InputsFunBench do
     }
   end
 
-  def map_fun(i), do: [i, i * i]
-
   defp data(range), do: Enum.to_list(range)
 
+  map_fun = fn i -> [i, i * i] end
+
   job flat_map(input) do
-    Enum.flat_map(input, &map_fun/1)
+    Enum.flat_map(input, map_fun)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(&map_fun/1) |> List.flatten()
+    input |> Enum.map(map_fun) |> List.flatten()
   end
 end

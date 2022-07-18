@@ -287,33 +287,6 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/delegate_without_input_bench.exs")
   end
 
-  test "runs benchmark for jobs_override_bench.exs" do
-    expect(BencheeMock, :run, fn jobs, config ->
-      assert %{"map" => map} = jobs
-      assert is_function(map, 0)
-
-      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 1)
-
-      benchee_run(jobs, config)
-    end)
-
-    assert_run("test/fixtures/jobs_override_bench.exs")
-  end
-
-  test "runs benchmark for jobs_update_bench.exs" do
-    expect(BencheeMock, :run, fn jobs, config ->
-      assert %{"map" => map, "add" => add} = jobs
-      assert is_function(map, 0)
-      assert is_function(add, 0)
-
-      assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console], time: 1)
-
-      benchee_run(jobs, config)
-    end)
-
-    assert_run("test/fixtures/jobs_update_bench.exs")
-  end
-
   test "runs benchmark for local_hooks_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert %{

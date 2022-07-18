@@ -13,6 +13,7 @@ defmodule BencheeDsl.MixProject do
       consolidate_protocols: true,
       test_coverage: [tool: ExCoveralls],
       dialyzer: dialyzer(),
+      aliases: aliases(),
       preferred_cli_env: preferred_cli_env(),
       docs: [
         extras: ["README.md"],
@@ -35,6 +36,7 @@ defmodule BencheeDsl.MixProject do
 
   defp preferred_cli_env do
     [
+      carp: :test,
       coveralls: :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
@@ -75,6 +77,12 @@ defmodule BencheeDsl.MixProject do
       true -> [{:recode, "~> 0.1", only: [:dev, :test]}]
       false -> []
     end
+  end
+
+  defp aliases do
+    [
+      carp: "test --seed 0 --max-failures 1"
+    ]
   end
 
   defp package do

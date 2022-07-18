@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 - dev
+
+This version comes with a lot of breaking changes.
+
++ Remove macros `BencheDsl.Benchmark.jobs/0/1`.
+
 ## 0.1.5 - 2022/07/17
 
 + Add local hooks (`@before_scenario`, `@before_each`, `@after_scenario`, `@after_each`)
