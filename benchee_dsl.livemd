@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.1.4"}
+  {:benchee_dsl, "~> 0.2.0"}
 ])
 ```
 
@@ -20,14 +20,14 @@ defmodule Benchmark.One do
 
   @list Enum.to_list(1..10_000)
 
-  def map_fun(i), do: [i, i * i]
+  map_fun = fn i -> [i, i * i] end
 
   job flat_map do
-    Enum.flat_map(@list, &map_fun/1)
+    Enum.flat_map(@list, map_fun)
   end
 
   job map_flatten do
-    @list |> Enum.map(&map_fun/1) |> List.flatten()
+    @list |> Enum.map(map_fun) |> List.flatten()
   end
 end
 ```
@@ -58,14 +58,14 @@ defmodule Benchmark.Two do
 
   @list Enum.to_list(1..10_000)
 
-  def map_fun(i), do: [i, i * i]
+  map_fun = fn i -> [i, i * i] end
 
   job flat_map do
-    Enum.flat_map(@list, &map_fun/1)
+    Enum.flat_map(@list, map_fun)
   end
 
   job map_flatten do
-    @list |> Enum.map(&map_fun/1) |> List.flatten()
+    @list |> Enum.map(map_fun) |> List.flatten()
   end
 end
 
@@ -94,14 +94,14 @@ Why do this? Functions can have different performance characteristics on differe
 defmodule Benchmark.Three do
   use BencheeDsl.Benchmark
 
-  def map_fun(i), do: [i, i * i]
+  map_fun = fn i -> [i, i * i] end
 
   job flat_map(input) do
-    Enum.flat_map(input, &map_fun/1)
+    Enum.flat_map(input, map_fun)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(&map_fun/1) |> List.flatten()
+    input |> Enum.map(map_fun) |> List.flatten()
   end
 end
 
@@ -128,14 +128,14 @@ defmodule Benchmark.Four do
     "Bigger" => Enum.to_list(1..100_000)
   })
 
-  def map_fun(i), do: [i, i * i]
+  map_fun = fn i -> [i, i * i] end
 
   job flat_map(input) do
-    Enum.flat_map(input, &map_fun/1)
+    Enum.flat_map(input, map_fun)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(&map_fun/1) |> List.flatten()
+    input |> Enum.map(map_fun) |> List.flatten()
   end
 end
 
