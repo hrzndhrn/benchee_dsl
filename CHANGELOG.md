@@ -6,7 +6,9 @@
 
 + Update `BencheeDsl.Benchmark.job`. The job macro no longer defines a function.
   The macro now generates an anonymous function that is managed by BencheeDsl.
-+ Remove macros `BencheeDsl.Benchmark.jobs/0/1`.
++ Change implementations for macro `BencheeDsl.Benchmark.jobs/1`. This macro
+  generates now jobs for each public function of a given module.
++ Remove macro `BencheeDsl.Benchmark.jobs/0`.
 
 ## 0.1.5 - 2022/07/17
 

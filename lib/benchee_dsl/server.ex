@@ -109,6 +109,7 @@ defmodule BencheeDsl.Server do
 
   defp update_local_hook(opts, key) do
     case Keyword.get(opts, key) do
+      nil -> opts
       [] -> Keyword.delete(opts, key)
       [fun] when is_function(fun) -> Keyword.put(opts, key, fun)
       _invalid -> raise "Invalid local hook #{inspect(key)}"

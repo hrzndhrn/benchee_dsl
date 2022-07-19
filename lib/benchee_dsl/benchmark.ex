@@ -168,6 +168,22 @@ defmodule BencheeDsl.Benchmark do
     quote_job(fun_name, var, body)
   end
 
+  @doc """
+  Takes a module and generates jobs for each publich function.
+  """
+  defmacro jobs(module) do
+    quote bind_quoted: [module: module] do
+      tags = Module.delete_attribute(__MODULE__, :tag)
+
+      Enum.each(module.__info__(:functions), fn {name, arity} ->
+        Server.register(:job, __MODULE__, name,
+          tags: tags,
+          fun: fn input -> apply(module, name, input) end
+        )
+      end)
+    end
+  end
+
   defp quote_job(fun_name, var, body) do
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name),

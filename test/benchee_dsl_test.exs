@@ -267,7 +267,25 @@ defmodule BencheeDslTest do
     assert_run("test/fixtures/delegate_bench.exs")
   end
 
-  test "runs benchmark for delegate__without_input_bench.exs" do
+  test "runs benchmark for delegate_all_bench.exs" do
+    expect(BencheeMock, :run, fn jobs, config ->
+      assert(
+        %{
+          "flat_map" => flat_map,
+          "map_flatten" => map_flatten
+        } = jobs
+      )
+
+      assert is_function(flat_map, 1)
+      assert is_function(map_flatten, 1)
+
+      benchee_run(jobs, config)
+    end)
+
+    assert_run("test/fixtures/delegate_all_bench.exs")
+  end
+
+  test "runs benchmark for delegate_without_input_bench.exs" do
     expect(BencheeMock, :run, fn jobs, config ->
       assert jobs |> Map.keys() |> Enum.sort() == ["flat_map", "map_flatten"]
 
