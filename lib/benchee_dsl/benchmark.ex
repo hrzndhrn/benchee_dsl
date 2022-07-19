@@ -70,6 +70,8 @@ defmodule BencheeDsl.Benchmark do
 
       @behaviour BencheeDsl.Benchmark
 
+      Server.register(:init, __MODULE__)
+
       Module.register_attribute(__MODULE__, :title, persist: true)
       Module.register_attribute(__MODULE__, :description, persist: true)
 
