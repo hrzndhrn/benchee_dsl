@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.2.0"}
+  {:benchee_dsl, github: "hrzndhrn/benchee_dsl"}
 ])
 ```
 
@@ -173,7 +173,7 @@ defmodule Benchmark.Five do
   })
 
   job(&Benchmark.Jobs.flat_map/1)
-  job(&Benchmark.Jobs.map_flatten/1)
+  job(&Benchmark.Jobs.map_flatten/1, as: "map and flat")
 end
 
 Benchmark.Five.run()

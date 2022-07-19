@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.0 - dev
+## 0.2.1 - 2022/07/19
+
++ Add an init step to benchmarks.
+
+## 0.2.0 - 2022/07/19
 
 ### Breaking changes
 
