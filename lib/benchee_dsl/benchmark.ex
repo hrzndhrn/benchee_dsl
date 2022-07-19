@@ -62,6 +62,10 @@ defmodule BencheeDsl.Benchmark do
     end)
   end
 
+  String.split("""
+  hello
+  """)
+
   defmacro __using__(_opts) do
     quote do
       import BencheeDsl.Benchmark

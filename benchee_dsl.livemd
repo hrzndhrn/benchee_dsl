@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, github: "hrzndhrn/benchee_dsl"}
+  {:benchee_dsl, "~> 0.2"}
 ])
 ```
 
