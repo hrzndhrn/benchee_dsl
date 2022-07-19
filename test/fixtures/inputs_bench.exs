@@ -9,13 +9,13 @@ defmodule InputsBench do
 
   config time: 1
 
+  map_fun = fn i -> [i, i * i] end
+
   job flat_map(input) do
-    Enum.flat_map(input, &map_fun/1)
+    Enum.flat_map(input, map_fun)
   end
 
   job "map.flatten", input do
-    input |> Enum.map(&map_fun/1) |> List.flatten()
+    input |> Enum.map(map_fun) |> List.flatten()
   end
-
-  def map_fun(i), do: [i, i * i]
 end

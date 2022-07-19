@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 - dev
+
+### Breaking changes
+
++ Update `BencheeDsl.Benchmark.job`. The job macro no longer defines a function.
+  The macro now generates an anonymous function that is managed by BencheeDsl.
++ Change implementations for macro `BencheeDsl.Benchmark.jobs/1`. This macro
+  generates now jobs for each public function of a given module.
++ Remove macro `BencheeDsl.Benchmark.jobs/0`.
+
 ## 0.1.5 - 2022/07/17
 
 + Add local hooks (`@before_scenario`, `@before_each`, `@after_scenario`, `@after_each`)

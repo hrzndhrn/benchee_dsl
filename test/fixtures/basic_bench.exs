@@ -1,13 +1,13 @@
 defmodule BasicBench do
   use BencheeDsl.Benchmark
 
-  @list Enum.to_list(1..10_000)
+  list = Enum.to_list(1..10_000)
 
-  def map_fun(i), do: [i, i * i]
+  map_fun = fn i -> [i, i * i] end
 
-  job flat_map, do: Enum.flat_map(@list, &map_fun/1)
+  job flat_map, do: Enum.flat_map(list, map_fun)
 
-  job "map.flatten", do: @list |> Enum.map(&map_fun/1) |> List.flatten()
+  job "map.flatten", do: list |> Enum.map(map_fun) |> List.flatten()
 
   @tag :skip
   job foo2, do: 1 + 1

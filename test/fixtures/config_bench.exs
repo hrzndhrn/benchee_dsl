@@ -1,17 +1,17 @@
 defmodule ConfigBench do
   use BencheeDsl.Benchmark
 
-  @list Enum.to_list(1..10_000)
+  list = Enum.to_list(1..10_000)
 
-  def map_fun(i), do: [i, i * i]
+  map_fun = fn i -> [i, i * i] end
 
   config time: 3, parallel: 2
 
   job flat_map do
-    Enum.flat_map(@list, &map_fun/1)
+    Enum.flat_map(list, map_fun)
   end
 
   job "map.flatten" do
-    @list |> Enum.map(&map_fun/1) |> List.flatten()
+    list |> Enum.map(map_fun) |> List.flatten()
   end
 end
