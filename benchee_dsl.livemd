@@ -18,16 +18,15 @@ A benchmark is a module that uses `BenceeDsl.Benchmark`. The macro `job/2` defin
 defmodule Benchmark.One do
   use BencheeDsl.Benchmark
 
-  @list Enum.to_list(1..10_000)
-
+  list = Enum.to_list(1..10_000)
   map_fun = fn i -> [i, i * i] end
 
   job flat_map do
-    Enum.flat_map(@list, map_fun)
+    Enum.flat_map(list, map_fun)
   end
 
   job map_flatten do
-    @list |> Enum.map(map_fun) |> List.flatten()
+    list |> Enum.map(map_fun) |> List.flatten()
   end
 end
 ```
@@ -54,18 +53,18 @@ The `config` macro can be used to directly write the configuration into the benc
 defmodule Benchmark.Two do
   use BencheeDsl.Benchmark
 
-  config warmup: 1, time: 3, print: [configuration: false]
+  config(warmup: 1, time: 3, print: [configuration: false])
 
-  @list Enum.to_list(1..10_000)
+  list = Enum.to_list(1..10_000)
 
   map_fun = fn i -> [i, i * i] end
 
   job flat_map do
-    Enum.flat_map(@list, map_fun)
+    Enum.flat_map(list, map_fun)
   end
 
   job map_flatten do
-    @list |> Enum.map(map_fun) |> List.flatten()
+    list |> Enum.map(map_fun) |> List.flatten()
   end
 end
 
@@ -120,7 +119,7 @@ The `inputs` macro can be used to directly write the inputs into the benchmark.
 defmodule Benchmark.Four do
   use BencheeDsl.Benchmark
 
-  config time: 3, pre_check: true, print: [configuration: false]
+  config(time: 3, pre_check: true, print: [configuration: false])
 
   inputs(%{
     "Small" => Enum.to_list(1..1_000),
@@ -140,4 +139,63 @@ defmodule Benchmark.Four do
 end
 
 Benchmark.Four.run()
+```
+
+## Capture a job
+
+The macro `job/1` accepts also a capture ([`&/1`](https://hexdocs.pm/elixir/Kernel.SpecialForms.html#&/1)) as argument. The benchmarked functions are written in a separate module.
+
+```elixir
+defmodule Benchmark.Jobs do
+  defp map_fun(i), do: [i, i * i]
+
+  def flat_map(enum) do
+    Enum.flat_map(enum, &map_fun/1)
+  end
+
+  def map_flatten(enum) do
+    enum |> Enum.map(&map_fun/1) |> List.flatten()
+  end
+end
+```
+
+The `inputs` in the benchmark module must now be a list of arguments.
+
+```elixir
+defmodule Benchmark.Five do
+  use BencheeDsl.Benchmark
+
+  config(warmup: 1, time: 3, pre_check: true, print: [configuration: false])
+
+  inputs(%{
+    "Small" => [Enum.to_list(1..1_000)],
+    "Big" => [Enum.to_list(1..100_000)]
+  })
+
+  job(&Benchmark.Jobs.flat_map/1)
+  job(&Benchmark.Jobs.map_flatten/1)
+end
+
+Benchmark.Five.run()
+```
+
+## Capture all jobs
+
+The macro `jobs/1` generates from each public function of a given module a job.
+
+```elixir
+defmodule Benchmark.Six do
+  use BencheeDsl.Benchmark
+
+  config(warmup: 1, time: 3, pre_check: true, print: [configuration: false])
+
+  inputs(%{
+    "Small" => [Enum.to_list(1..1_000)],
+    "Big" => [Enum.to_list(1..100_000)]
+  })
+
+  jobs(Benchmark.Jobs)
+end
+
+Benchmark.Six.run()
 ```
