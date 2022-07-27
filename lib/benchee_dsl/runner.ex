@@ -121,7 +121,7 @@ defmodule BencheeDsl.Runner do
     Enum.reduce(jobs, %{}, fn {job, opts}, acc ->
       tags = Keyword.get(opts, :tags)
       name = to_string(job)
-      fun = Keyword.get(opts, :fun)
+      fun = job_fun(opts)
       job_opts = job_opts(opts)
 
       case {Enum.member?(tags, :skip), job_opts} do
@@ -133,6 +133,15 @@ defmodule BencheeDsl.Runner do
   end
 
   defp jobs(_), do: %{}
+
+  defp job_fun(opts) do
+    case Keyword.has_key?(opts, :fun) do
+      true -> Keyword.fetch!(opts, :fun)
+      false -> opts |> Keyword.fetch!(:mfa) |> capture()
+    end
+  end
+
+  defp capture({m, f, a}), do: Function.capture(m, f, a)
 
   defp job_opts(opts) do
     []

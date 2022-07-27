@@ -167,7 +167,7 @@ defmodule BencheeDsl.Benchmark do
   end
 
   defmacro job(fun_name, do: body) do
-    quote_job(fun_name, do: body)
+    quote_job(fun_name, body)
   end
 
   defmacro job(fun_name, var, do: body) when is_binary(fun_name) do
@@ -191,6 +191,8 @@ defmodule BencheeDsl.Benchmark do
   end
 
   defp quote_job(fun_name, var, body) do
+    fun_name = to_atom(fun_name)
+
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name),
         after_each: Module.delete_attribute(__MODULE__, :after_each),
@@ -198,12 +200,18 @@ defmodule BencheeDsl.Benchmark do
         before_each: Module.delete_attribute(__MODULE__, :before_each),
         before_scenario: Module.delete_attribute(__MODULE__, :before_scenario),
         tags: Module.delete_attribute(__MODULE__, :tag),
-        fun: fn unquote(var) -> unquote(body) end
+        mfa: {__MODULE__, unquote(fun_name), 1}
       )
+
+      def unquote(fun_name)(unquote(var)) do
+        unquote(body)
+      end
     end
   end
 
   defp quote_job(fun_name, body) do
+    fun_name = to_atom(fun_name)
+
     quote do
       Server.register(:job, __MODULE__, unquote(fun_name),
         after_each: Module.delete_attribute(__MODULE__, :after_each),
@@ -211,8 +219,12 @@ defmodule BencheeDsl.Benchmark do
         before_each: Module.delete_attribute(__MODULE__, :before_each),
         before_scenario: Module.delete_attribute(__MODULE__, :before_scenario),
         tags: Module.delete_attribute(__MODULE__, :tag),
-        fun: fn -> unquote(body) end
+        mfa: {__MODULE__, unquote(fun_name), 0}
       )
+
+      def unquote(fun_name)() do
+        unquote(body)
+      end
     end
   end
 
@@ -241,6 +253,10 @@ defmodule BencheeDsl.Benchmark do
       )
     end
   end
+
+  defp to_atom(atom) when is_atom(atom), do: atom
+
+  defp to_atom(string) when is_binary(string), do: String.to_atom(string)
 
   @doc """
   Adds a formatter to the benchmark.

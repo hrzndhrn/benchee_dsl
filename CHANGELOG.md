@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0 - 2022/07/27
+
+### Breaking changes
+
++ Update `BencheeDsl.Benchmark.job`. The macro job now creates a function again.
+
 ## 0.2.1 - 2022/07/19
 
 + Add an init step to benchmarks.
