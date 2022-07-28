@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.2"}
+  {:benchee_dsl, "~> 0.3"}
 ])
 ```
 
@@ -20,7 +20,7 @@ defmodule Benchmark.One do
 
   @list Enum.to_list(1..10_000)
 
-  defp map_fun(1), do: [i, i * i]
+  defp map_fun(i), do: [i, i * i]
 
   job flat_map do
     Enum.flat_map(@list, &map_fun/1)
@@ -166,15 +166,15 @@ The `inputs` in the benchmark module must now be a list of arguments.
 defmodule Benchmark.Five do
   use BencheeDsl.Benchmark
 
-  config warmup: 1, time: 3, pre_check: true, print: [configuration: false]
+  config(warmup: 1, time: 3, pre_check: true, print: [configuration: false])
 
-  inputs %{
+  inputs(%{
     "Small" => [Enum.to_list(1..1_000)],
     "Big" => [Enum.to_list(1..100_000)]
-  }
+  })
 
-  job &Benchmark.Jobs.flat_map/1
-  job &Benchmark.Jobs.map_flatten/1, as: "map and flat"
+  job(&Benchmark.Jobs.flat_map/1)
+  job(&Benchmark.Jobs.map_flatten/1, as: "map and flat")
 end
 
 Benchmark.Five.run()
@@ -188,14 +188,19 @@ The macro `jobs/1` generates from each public function of a given module a job.
 defmodule Benchmark.Six do
   use BencheeDsl.Benchmark
 
-  config(warmup: 1, time: 3, pre_check: true, print: [configuration: false])
+  config(
+    warmup: 1,
+    time: 3,
+    pre_check: true,
+    print: [configuration: false]
+  )
 
   inputs(%{
     "Small" => [Enum.to_list(1..1_000)],
     "Big" => [Enum.to_list(1..100_000)]
   })
 
-  jobs Benchmark.Jobs
+  jobs(Benchmark.Jobs)
 end
 
 Benchmark.Six.run()
