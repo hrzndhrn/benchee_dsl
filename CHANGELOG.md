@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 - 2022/07/27
+## 0.3.0 - 2022/07/28
 
 ### Breaking changes
 
