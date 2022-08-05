@@ -9,7 +9,7 @@ defmodule BencheeDsl.MixProject do
       version: "0.3.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
-      deps: deps() ++ recode(),
+      deps: deps(),
       consolidate_protocols: true,
       test_coverage: [tool: ExCoveralls],
       dialyzer: dialyzer(),
@@ -63,13 +63,15 @@ defmodule BencheeDsl.MixProject do
   defp deps do
     [
       {:benchee, ">= 0.99.0 and < 2.0.0"},
+      # {:benchee, path: "../../forks/benchee"},
+      # dev/test
       {:benchee_markdown, "~> 0.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:excoveralls, "~> 0.14", only: :test, runtime: false},
       {:mox, "~> 1.0", only: :test}
-    ]
+    ] ++ recode()
   end
 
   defp recode() do
