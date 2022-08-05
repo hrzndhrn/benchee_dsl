@@ -2,13 +2,15 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.3"}
+  {:benchee_dsl, "~> 0.3.0"}
 ])
 ```
 
 ## Usage
 
-[BencheeDsl](https://hexdocs.pm/benchee_dsl/readme.html) offers a DSL to write benchmarks for [Benchee](https://github.com/bencheeorg/benchee) in a more Elixir way.
+[BencheeDsl](https://hexdocs.pm/benchee_dsl/readme.html) offers a DSL to write benchmarks for [Benchee](https://github.com/bencheeorg/benchee) in a more Elixir way. For more informations to benchmarks and interpretation of the results see the [Benchee documentation](https://hexdocs.pm/benchee/readme.html).
+
+> Note: Currently, this notebook does not run with the Livebook App.
 
 ## Define a benchmark
 
@@ -84,6 +86,8 @@ By default only execution time is measured, memory and reductions need to be opt
 Benchmark.Two.run(memory_time: 2, reduction_time: 2)
 ```
 
+<!-- livebook:{"branch_parent_index":0} -->
+
 ## Inputs
 
 `:inputs` is a very useful configuration that allows you to run the same benchmarking jobs with different inputs. We call this combination a _"scenario"_. You specify the inputs as either a map from name (String or atom) to the actual input value or a list of tuples where the first element in each tuple is the name and the second element in the tuple is the value.
@@ -141,6 +145,8 @@ end
 
 Benchmark.Four.run()
 ```
+
+<!-- livebook:{"branch_parent_index":0} -->
 
 ## Capture a job
 
