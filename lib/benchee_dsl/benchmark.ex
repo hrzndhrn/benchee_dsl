@@ -203,6 +203,7 @@ defmodule BencheeDsl.Benchmark do
         mfa: {__MODULE__, unquote(fun_name), 1}
       )
 
+      @spec unquote(fun_name)(term()) :: term()
       def unquote(fun_name)(unquote(var)) do
         unquote(body)
       end
@@ -222,6 +223,7 @@ defmodule BencheeDsl.Benchmark do
         mfa: {__MODULE__, unquote(fun_name), 0}
       )
 
+      @spec unquote(fun_name)() :: term()
       def unquote(fun_name)() do
         unquote(body)
       end
