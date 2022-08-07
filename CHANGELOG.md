@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2022/08/07
+
++ Add macro `BencheeDsl.Benchmark.repeat/2`.
+
 ## 0.3.0 - 2022/07/28
 
 ### Breaking changes
