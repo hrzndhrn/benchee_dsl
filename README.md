@@ -9,6 +9,8 @@
 in an ExUnit style. For more informations to benchmarks and interpretation of
 the results see the [Benchee documentation](https://hexdocs.pm/benchee/readme.html).
 
+[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fhrzndhrn%2Fbenchee_dsl%2Fblob%2Fmain%2Fbenchee_dsl.livemd)
+
 ## Installation
 
 First, add `benchee` and `benchee_dsl` to your `mix.exs` dependencies:
@@ -184,9 +186,27 @@ defmodule CaptureBench do
 end
 ```
 
-### @before_scenario
-Jobs tagged with `@before_scenario` are getting a function to transform the input.
-The following example can be found at `example/sets`.
+### Hooks
+
+`BencheeDsl` accepts the tags
+  * `@before_scenario`
+  * `@before_each`
+  * `@after_each`
+  * `@after_each`
+for a `job`. Each of this functions are accepting a function
+with an arity of zero or one.
+
+Global hooks are defined with the macros:
+  * `BencheeDsl.Benchmark.before_scenario/2`
+  * `BencheeDsl.Benchmark.before_each/2`
+  * `BencheeDsl.Benchmark.after_each/2`
+  * `BencheeDsl.Benchmark.after_scenario/2`
+
+See the Benchee documentation for [hooks](https://github.com/bencheeorg/benchee#hooks-setup-teardown-etc)
+for more informations.
+
+The following example can be found at `example/sets`. The original benchmark
+can be found at [josevalim/set_bench](https://github.com/josevalim/sets_bench).
 
 ```elixir
 defmodule AddBench do
@@ -227,7 +247,7 @@ defmodule AddBench do
 end
 ```
 
-### setup, on_exit
+### Setup and exit
 
 ```elixir
 defmodule ExampleBench do
