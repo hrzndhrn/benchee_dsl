@@ -10,7 +10,7 @@ Mix.install([
 
 ## Usage
 
-[BencheeDsl](https://hexdocs.pm/benchee_dsl/readme.html) offers a DSL to write benchmarks for [Benchee](https://github.com/bencheeorg/benchee) in a more Elixir way. For more informations to benchmarks and interpretation of the results see the [Benchee documentation](https://hexdocs.pm/benchee/readme.html).
+[BencheeDsl](https://hexdocs.pm/benchee_dsl/readme.html) offers a DSL to write benchmarks for [Benchee](https://github.com/bencheeorg/benchee) in an ExUnit style. For more informations to benchmarks and interpretation of the results see the [Benchee documentation](https://hexdocs.pm/benchee/readme.html).
 
 > Note: Currently, this notebook does not run with the Livebook App.
 
