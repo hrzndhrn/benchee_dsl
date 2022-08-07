@@ -5,9 +5,11 @@
 [![Coveralls: coverage](https://img.shields.io/coveralls/github/hrzndhrn/benchee_dsl?style=flat-square)](https://coveralls.io/github/hrzndhrn/benchee_dsl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://github.com/hrzndhrn/benchee_dsl/blob/main/LICENSE.md)
 
-`BencheeDsl` provides a DSL to write benchmarks for [`Benchee`](https://github.com/bencheeorg/benchee).
+`BencheeDsl` offers a DSL to write benchmarks for [Benchee](https://github.com/bencheeorg/benchee)
+in an ExUnit style. For more informations to benchmarks and interpretation of
+the results see the [Benchee documentation](https://hexdocs.pm/benchee/readme.html).
 
-For now, just an early alpha version.
+[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fhrzndhrn%2Fbenchee_dsl%2Fblob%2Fmain%2Fbenchee_dsl.livemd)
 
 ## Installation
 
@@ -63,7 +65,7 @@ The example benchmark:
 defmodule ExampleBench do
   use BencheeDsl.Benchmark
 
-  config time: 3
+  config time: 3, pre_check: true
 
   inputs %{
     "Small" => Enum.to_list(1..1_000),
@@ -71,19 +73,21 @@ defmodule ExampleBench do
     "Bigger" => Enum.to_list(1..100_000)
   }
 
-  map_fun = fn i -> [i, i * i] end
+  defp map_fun(i), do: [i, i * i]
 
   job flat_map(input) do
-    Enum.flat_map(input, map_fun)
+    Enum.flat_map(input, &map_fun/1)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(map_fun) |> List.flatten()
+    input |> Enum.map(&map_fun/1) |> List.flatten()
   end
 end
 ```
 
 ### Adding a formatter
+
+The next example uses the formatter [`benchee_markdown`](https://hex.pm/packages/benchee_markdown)
 
 ```elixir
 defmodule ExampleBench do
@@ -103,19 +107,19 @@ defmodule ExampleBench do
     "Bigger" => Enum.to_list(1..100_000)
   }
 
-  map_fun = fn i -> [i, i * i] end
+  defp map_fun(i), do: [i, i * i]
 
   job flat_map(input) do
-    Enum.flat_map(input, map_fun)
+    Enum.flat_map(input, &map_fun/1)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(map_fun) |> List.flatten()
+    input |> Enum.map(&map_fun/1) |> List.flatten()
   end
 end
 ```
 
-### inputs with do block
+### Inputs with do block
 
 ```elixir
 defmodule ExampleBench do
@@ -133,21 +137,23 @@ defmodule ExampleBench do
     }
   end
 
-  map_fun = fn i -> [i, i * i] end
+  defp map_fun(i), do: [i, i * i]
 
   job flat_map(input) do
-    Enum.flat_map(input, map_fun)
+    Enum.flat_map(input, &map_fun/1)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(map_fun) |> List.flatten()
+    input |> Enum.map(&map_fun/1) |> List.flatten()
   end
 end
 ```
 
-### job delgates
-Jobs can be delegated to functions. In this case, the input must be a list with
-the length of the function's arity.
+### Capture a job
+
+Jobs can be captrured. In this case, the input must be a list with
+the length of the function's arity. Note that the next example does not only
+measueres `flat-map` and `map-flatten` but also `Enum.to_list`.
 
 
 ```elixir
@@ -160,12 +166,12 @@ defmodule Foo do
     a |> data(b) |> Enum.map(&map_fun/1) |> List.flatten()
   end
 
-  def data(a, b), do: Enum.to_list(a..b)
+  defp data(a, b), do: Enum.to_list(a..b)
 
-  def map_fun(i), do: [i, i * i]
+  defp map_fun(i), do: [i, i * i]
 end
 
-defmodule DelegateBench do
+defmodule CaptureBench do
   use BencheeDsl.Benchmark
 
   inputs %{
@@ -180,9 +186,27 @@ defmodule DelegateBench do
 end
 ```
 
-### @before_scenario
-Jobs tagged with `@before_scenario` are getting a function to transform the input. The
-following example can be found at `example/sets`.
+### Hooks
+
+`BencheeDsl` accepts the tags
+  * `@before_scenario`
+  * `@before_each`
+  * `@after_each`
+  * `@after_each`
+for a `job`. Each of this functions are accepting a function
+with an arity of zero or one.
+
+Global hooks are defined with the macros:
+  * `BencheeDsl.Benchmark.before_scenario/2`
+  * `BencheeDsl.Benchmark.before_each/2`
+  * `BencheeDsl.Benchmark.after_each/2`
+  * `BencheeDsl.Benchmark.after_scenario/2`
+
+See the Benchee documentation for [hooks](https://github.com/bencheeorg/benchee#hooks-setup-teardown-etc)
+for more informations.
+
+The following example can be found at `example/sets`. The original benchmark
+can be found at [josevalim/set_bench](https://github.com/josevalim/sets_bench).
 
 ```elixir
 defmodule AddBench do
@@ -223,7 +247,7 @@ defmodule AddBench do
 end
 ```
 
-### setup, on_exit
+### Setup and exit
 
 ```elixir
 defmodule ExampleBench do
@@ -247,14 +271,14 @@ defmodule ExampleBench do
     "Bigger" => Enum.to_list(1..100_000)
   }
 
-  map_fun = fn i -> [i, i * i] end
+  defp map_fun(i) [i, i * i]
 
   job flat_map(input) do
-    Enum.flat_map(input, map_fun)
+    Enum.flat_map(input, &map_fun/1)
   end
 
   job map_flatten(input) do
-    input |> Enum.map(map_fun) |> List.flatten()
+    input |> Enum.map(&map_fun/1) |> List.flatten()
   end
 end
 ```

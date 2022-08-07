@@ -15,7 +15,7 @@ defmodule BencheeDsl.Benchmark do
     :title
   ]
 
-  @type keys ::
+  @type key ::
           :config
           | :description
           | :dir
@@ -51,7 +51,7 @@ defmodule BencheeDsl.Benchmark do
   @doc """
   Updates a `benchmark` struct by the given `key` or `path`.
   """
-  @spec update(t(), keys() | list(atom()), (any() -> any())) :: t()
+  @spec update(t(), key() | [atom()], (any() -> any())) :: t()
   def update(benchmark, key, fun) when key in @keys do
     Map.update!(benchmark, key, fun)
   end
@@ -175,7 +175,7 @@ defmodule BencheeDsl.Benchmark do
   end
 
   @doc """
-  Takes a module and generates jobs for each publich function.
+  Takes a module and generates jobs for each public function.
   """
   defmacro jobs(module) do
     quote bind_quoted: [module: module] do
@@ -203,6 +203,7 @@ defmodule BencheeDsl.Benchmark do
         mfa: {__MODULE__, unquote(fun_name), 1}
       )
 
+      @spec unquote(fun_name)(term()) :: term()
       def unquote(fun_name)(unquote(var)) do
         unquote(body)
       end
@@ -222,6 +223,7 @@ defmodule BencheeDsl.Benchmark do
         mfa: {__MODULE__, unquote(fun_name), 0}
       )
 
+      @spec unquote(fun_name)() :: term()
       def unquote(fun_name)() do
         unquote(body)
       end
@@ -346,5 +348,27 @@ defmodule BencheeDsl.Benchmark do
     quote do
       Server.register(:after_each, __MODULE__, fn unquote(var) -> unquote(body) end)
     end
+  end
+
+  @doc """
+  Repeates the given `body` n `times`.
+
+  `repeat` is an experimental feature. It remains to be seen whether this featuer
+  makes sense.
+
+  This macro can be usefull for benchmarking super fast functions.
+  """
+  defmacro repeat(times, do: body) when times > 0 and times <= 10_000 do
+    quoted =
+      quote do
+        unquote(body)
+      end
+
+    lines = Enum.map(1..times, fn _ -> quoted end)
+    {:__block__, [], lines}
+  end
+
+  defmacro repeat(_times, do: _body) do
+    raise ArgumentError, "expected an integer between 1 an 10_000"
   end
 end
