@@ -7,7 +7,7 @@ defmodule BencheeDsl.MixProject do
     [
       app: :benchee_dsl,
       version: "0.4.0",
-      elixir: "~> 1.8",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       consolidate_protocols: true,
