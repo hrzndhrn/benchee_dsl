@@ -1,4 +1,6 @@
 defmodule BencheeDsl.SmartCell do
+  @moduledoc false
+
   use Kino.JS
   use Kino.JS.Live
   use Kino.SmartCell, name: "Benchee"
@@ -27,13 +29,11 @@ defmodule BencheeDsl.SmartCell do
     quote do
       {:module, name, _binary, _bindings} = unquote(source(attrs))
 
-      config = [
+      name.run(
         # return: :result,
         # formatters: [],
         print: [configuration: false, benchmarking: true]
-      ]
-
-      apply(name, :run, [config])
+      )
     end
     |> Kino.SmartCell.quoted_to_string()
   end

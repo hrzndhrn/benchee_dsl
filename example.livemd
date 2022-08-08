@@ -32,6 +32,5 @@ Mix.install(
     end
   end
 
-config = [print: [configuration: false, benchmarking: true]]
-apply(name, :run, [config])
+name.run(print: [configuration: false, benchmarking: true])
 ```
