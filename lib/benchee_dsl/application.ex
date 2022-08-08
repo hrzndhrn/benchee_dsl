@@ -4,6 +4,8 @@ defmodule BencheeDsl.Application do
   use Application
 
   def start(_type, _args) do
+    Kino.SmartCell.register(BencheeDsl.SmartCell)
+
     children = [
       BencheeDsl.Server
     ]

@@ -6,7 +6,7 @@ defmodule BencheeDsl.MixProject do
   def project do
     [
       app: :benchee_dsl,
-      version: "0.3.1",
+      version: "0.4.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -63,7 +63,7 @@ defmodule BencheeDsl.MixProject do
   defp deps do
     [
       {:benchee, ">= 0.99.0 and < 2.0.0"},
-      # {:benchee, path: "../../forks/benchee"},
+      {:kino, "~> 0.6.2"},
       # dev/test
       {:benchee_markdown, "~> 0.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},

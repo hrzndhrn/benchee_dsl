@@ -95,7 +95,8 @@ defmodule BencheeDsl.Benchmark do
       @impl BencheeDsl.Benchmark
       @spec run(keyword()) :: :ok
       def run(config \\ []) do
-        Server.run(config, %{include: __MODULE__, run: :iex})
+        {return, config} = Keyword.pop(config, :return, :ok)
+        Server.run(config, %{include: __MODULE__, run: :iex, return: return})
       end
     end
   end
