@@ -3,9 +3,8 @@
 ```elixir
 Mix.install(
   [
-    {:benchee_dsl, path: "Projects/hrzndhrn/benchee_dsl"}
-  ],
-  force: true
+    {:benchee_dsl, "~> 0.4"}
+  ]
 )
 ```
 
