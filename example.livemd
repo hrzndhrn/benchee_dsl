@@ -1,11 +1,9 @@
 # BencheeDsl example
 
 ```elixir
-Mix.install(
-  [
-    {:benchee_dsl, "~> 0.4"}
-  ]
-)
+Mix.install([
+  {:benchee_dsl, "~> 0.4"}
+])
 ```
 
 ## flat-map vs map-flatten
