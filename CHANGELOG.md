@@ -1,8 +1,10 @@
 # Changelog
 
-## 0.4.0 - 2022/08/08
+## 0.4.0 - 2022/08/14
 
 + Add an early beta of the `Benchee` smart cell.
++ Add option `:return` to `BenceeDsl.Benchmark.run/1`.
++ Remove macro `BencheeDsl.Benchmark.repeat/2`.
 
 ## 0.3.1 - 2022/08/07
 

@@ -350,26 +350,4 @@ defmodule BencheeDsl.Benchmark do
       Server.register(:after_each, __MODULE__, fn unquote(var) -> unquote(body) end)
     end
   end
-
-  @doc """
-  Repeates the given `body` n `times`.
-
-  `repeat` is an experimental feature. It remains to be seen whether this featuer
-  makes sense.
-
-  This macro can be usefull for benchmarking super fast functions.
-  """
-  defmacro repeat(times, do: body) when times > 0 and times <= 10_000 do
-    quoted =
-      quote do
-        unquote(body)
-      end
-
-    lines = Enum.map(1..times, fn _ -> quoted end)
-    {:__block__, [], lines}
-  end
-
-  defmacro repeat(_times, do: _body) do
-    raise ArgumentError, "expected an integer between 1 an 10_000"
-  end
 end
