@@ -17,11 +17,18 @@ defmodule BencheeDsl.Server do
   defp initial, do: %{benchmarks: %{}, config: []}
 
   def run(config, cli_args) do
-    Enum.each(benchmarks(), fn {module, opts} ->
-      Runner.run(module, opts, config, config(), cli_args)
+    benchmarks()
+    |> Enum.map(fn {module, opts} ->
+      result = Runner.run(module, opts, config, config(), cli_args)
       on_exit(module)
+      result
     end)
+    |> results(cli_args)
   end
+
+  defp results([result], %{run: :iex, return: :result}), do: result
+
+  defp results(_results, _cli_args), do: :ok
 
   def config do
     Agent.get(@agent, fn %{config: config} -> config end)

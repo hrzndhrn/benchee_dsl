@@ -2,8 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.3"},
-  # {:benchee_dsl, path: "Projects/hrzndhrn/benchee_dsl"},
+  {:benchee_dsl, "~> 0.4"},
   {:beam_file, "~> 0.3"}
 ])
 ```
@@ -42,6 +41,12 @@ Benche runs the benchmark and writes the results to the console when the call 'B
 
 ```elixir
 Benchmark.One.run()
+```
+
+With the option `return: :result` the function `run/1` returns the `Benchee.Suite` struct with the results of the benchmark run.
+
+```elixir
+Benchmark.One.run(return: :result)
 ```
 
 ## Configuration
@@ -306,3 +311,35 @@ Benchee.run(
 ```
 
 This example shows also that we get the "same" results as in the other examples.
+
+<!-- livebook:{"branch_parent_index":0} -->
+
+## Benchee smartcell
+
+`BencheeDsl` also brings the `Benchee` smartcell.
+
+<!-- livebook:{"attrs":{"source":"defmodule Benchmark do\n  use BencheeDsl.Benchmark\n\n  config warmup: 1, time: 1, pre_check: true\n\n  inputs %{\n    \"Small\" => Enum.to_list(1..1_000),\n    \"Big\" => Enum.to_list(1..100_000)\n  }\n\n  defp map_fun(i), do: [i, i * i]\n\n  job flat_map(input) do\n    Enum.flat_map(input, &map_fun/1)\n  end\n\n  job map_flatten(input) do\n    input |> Enum.map(&map_fun/1) |> List.flatten()\n  end\nend"},"kind":"Elixir.BencheeDsl.SmartCell","livebook_object":"smart_cell"} -->
+
+```elixir
+{:module, name, _binary, _bindings} =
+  defmodule Benchmark do
+    use BencheeDsl.Benchmark
+    config(warmup: 1, time: 1, pre_check: true)
+    inputs(%{"Small" => Enum.to_list(1..1000), "Big" => Enum.to_list(1..100_000)})
+
+    defp map_fun(i) do
+      [i, i * i]
+    end
+
+    job(flat_map(input)) do
+      Enum.flat_map(input, &map_fun/1)
+    end
+
+    job(map_flatten(input)) do
+      input |> Enum.map(&map_fun/1) |> List.flatten()
+    end
+  end
+
+config = [print: [configuration: false, benchmarking: true]]
+apply(name, :run, [config])
+```

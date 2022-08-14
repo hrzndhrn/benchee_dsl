@@ -19,7 +19,7 @@ First, add `benchee` and `benchee_dsl` to your `mix.exs` dependencies:
 def deps do
   [
     {:benchee, "~> 1.0.0", only: :dev},
-    {:benchee_dsl, "~> 0.3", only: :dev}
+    {:benchee_dsl, "~> 0.4", only: :dev}
   ]
 end
 ```

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2022/08/08
+
++ Add an early beta of the `Benchee` smart cell.
+
 ## 0.3.1 - 2022/08/07
 
 + Add macro `BencheeDsl.Benchmark.repeat/2`.
