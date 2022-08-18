@@ -2,6 +2,11 @@
 
 ## 0.4.0 - 2022/08/14
 
++ Render result as markdown when `benchee_markdown` available.
++ Fix `return: :result`.
+
+## 0.4.0 - 2022/08/14
+
 + Add an early beta of the `Benchee` smart cell.
 + Add option `:return` to `BenceeDsl.Benchmark.run/1`.
 + Remove macro `BencheeDsl.Benchmark.repeat/2`.

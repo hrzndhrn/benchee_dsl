@@ -1,3 +1,25 @@
+defmodule BencheeDsl.Livebook do
+  @moduledoc false
+
+  alias Benchee.Formatters.Markdown
+
+  def benchee_config do
+    case markdown?() do
+      true -> [return: :result, formatters: []]
+      false -> []
+    end
+  end
+
+  def render(suite) do
+    case markdown?() do
+      true -> Markdown |> apply(:render, [suite, [livebook: true]]) |> Kino.Markdown.new()
+      false -> :ok
+    end
+  end
+
+  defp markdown?, do: function_exported?(Markdown, :render, 2)
+end
+
 defmodule BencheeDsl.SmartCell do
   @moduledoc false
 
@@ -29,11 +51,9 @@ defmodule BencheeDsl.SmartCell do
     quote do
       {:module, name, _binary, _bindings} = unquote(source(attrs))
 
-      name.run(
-        # return: :result,
-        # formatters: [],
-        print: [configuration: false, benchmarking: true]
-      )
+      BencheeDsl.Livebook.benchee_config()
+      |> name.run()
+      |> BencheeDsl.Livebook.render()
     end
     |> Kino.SmartCell.quoted_to_string()
   end

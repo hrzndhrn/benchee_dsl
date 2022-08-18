@@ -7,8 +7,8 @@ defmodule BencheeDsl.Runner do
     opts = Map.update(opts, :config, [], fn opts_config -> Keyword.merge(opts_config, config) end)
 
     case included?(module, cli_args) do
-      true -> run(module, opts, config, dsl_config)
-      false -> :ok
+      true -> {:ok, run(module, opts, config, dsl_config)}
+      false -> :error
     end
   end
 
@@ -18,11 +18,12 @@ defmodule BencheeDsl.Runner do
     case included?(module, cli_args) do
       true ->
         IO.write("Run: #{Path.relative_to_cwd(file)}\n")
-        run(module, opts, config, dsl_config)
+        {:ok, run(module, opts, config, dsl_config)}
         IO.write("\n")
 
       false ->
         IO.write("Exclude: #{Path.relative_to_cwd(file)}\n")
+        :error
     end
   end
 

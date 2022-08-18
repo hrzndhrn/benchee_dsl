@@ -1,9 +1,12 @@
 # BencheeDsl - A DSL for Benchee
 
 ```elixir
-Mix.install([
-  {:benchee_dsl, "~> 0.4"}
-])
+Mix.install(
+  [
+    {:benchee_dsl, path: "Projects/hrzndhrn/benchee_dsl"}
+  ],
+  force: true
+)
 ```
 
 ## Usage
@@ -89,7 +92,7 @@ You can measure one of these metrics, or all at the same time. The choice is up 
 By default only execution time is measured, memory and reductions need to be opted in by specifying a non 0 time amount.
 
 ```elixir
-Benchmark.Two.run(memory_time: 2, reduction_time: 2)
+Benchmark.Two.run(memory_time: 0.2, reduction_time: 0.2, time: 0.2, return: :result)
 ```
 
 <!-- livebook:{"branch_parent_index":0} -->
@@ -241,7 +244,7 @@ Benchmark.Six.run()
     end
   end
 
-name.run(print: [configuration: false, benchmarking: true])
+BencheeDsl.Livebook.benchee_config() |> name.run() |> BencheeDsl.Livebook.render()
 ```
 
 <!-- livebook:{"branch_parent_index":0} -->

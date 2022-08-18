@@ -18,10 +18,15 @@ defmodule BencheeDsl.Server do
 
   def run(config, cli_args) do
     benchmarks()
-    |> Enum.map(fn {module, opts} ->
-      result = Runner.run(module, opts, config, config(), cli_args)
-      on_exit(module)
-      result
+    |> Enum.reduce([], fn {module, opts}, acc ->
+      case Runner.run(module, opts, config, config(), cli_args) do
+        {:ok, result} ->
+          on_exit(module)
+          [result | acc]
+
+        :error ->
+          acc
+      end
     end)
     |> results(cli_args)
   end
