@@ -2,19 +2,28 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.4"}
+  {:benchee_dsl, path: "Projects/hrzndhrn/benchee_dsl"},
+  {:benchee_markdown, "~> 0.3"}
 ])
 ```
 
 ## flat-map vs map-flatten
 
-<!-- livebook:{"attrs":{"source":"defmodule Benchmark do\n  use BencheeDsl.Benchmark\n\n  config warmup: 1, time: 1, pre_check: true\n\n  inputs %{\n    \"Small\" => Enum.to_list(1..1_000),\n    \"Big\" => Enum.to_list(1..100_000)\n  }\n\n  defp map_fun(i), do: [i, i * i]\n\n  job flat_map(input) do\n    Enum.flat_map(input, &map_fun/1)\n  end\n\n  job map_flatten(input) do\n    input |> Enum.map(&map_fun/1) |> List.flatten()\n  end\nend"},"kind":"Elixir.BencheeDsl.SmartCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":{"source":"defmodule Benchmark do\n  use BencheeDsl.Benchmark\n\n  config warmup: 1,\n         time: 1,\n         memory_time: 1, \n         reduction_time: 1,\n         print: [configuration: false, benchmarking: false]\n\n  inputs %{\n    \"Small\" => Enum.to_list(1..1_000),\n    \"Big\" => Enum.to_list(1..100_000)\n  }\n\n  defp map_fun(i), do: [i, i * i]\n\n  job flat_map(input) do\n    Enum.flat_map(input, &map_fun/1)\n  end\n\n  job map_flatten(input) do\n    input |> Enum.map(&map_fun/1) |> List.flatten()\n  end\nend"},"kind":"Elixir.BencheeDsl.SmartCell","livebook_object":"smart_cell"} -->
 
 ```elixir
 {:module, name, _binary, _bindings} =
   defmodule Benchmark do
     use BencheeDsl.Benchmark
-    config(warmup: 1, time: 1, pre_check: true)
+
+    config(
+      warmup: 1,
+      time: 1,
+      memory_time: 1,
+      reduction_time: 1,
+      print: [configuration: false, benchmarking: false]
+    )
+
     inputs(%{"Small" => Enum.to_list(1..1000), "Big" => Enum.to_list(1..100_000)})
 
     defp map_fun(i) do
@@ -30,5 +39,5 @@ Mix.install([
     end
   end
 
-name.run(print: [configuration: false, benchmarking: true])
+BencheeDsl.Livebook.benchee_config() |> name.run() |> BencheeDsl.Livebook.render()
 ```

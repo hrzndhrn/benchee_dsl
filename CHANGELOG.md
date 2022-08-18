@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0 - 2022/08/18
+
++ Render result as markdown when `benchee_markdown` available.
++ Fix `return: :result`.
+
 ## 0.4.0 - 2022/08/14
 
 + Add an early beta of the `Benchee` smart cell.
