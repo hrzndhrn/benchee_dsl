@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, "~> 0.5"},
+  {:benchee_dsl, "0.5.1"},
   {:benchee_markdown, "~> 0.3"}
 ])
 ```
