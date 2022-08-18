@@ -65,7 +65,7 @@ defmodule BencheeDsl.MixProject do
       {:benchee, ">= 0.99.0 and < 2.0.0"},
       {:kino, "~> 0.6.2"},
       # dev/test
-      {:benchee_markdown, "~> 0.2", only: [:dev, :test]},
+      {:benchee_markdown, "~> 0.3", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
