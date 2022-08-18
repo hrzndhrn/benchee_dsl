@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:benchee_dsl, path: "Projects/hrzndhrn/benchee_dsl"},
+  {:benchee_dsl, "~> 0.5"},
   {:benchee_markdown, "~> 0.3"}
 ])
 ```

@@ -17,7 +17,9 @@ defmodule BencheeDsl.Livebook do
     end
   end
 
-  defp markdown?, do: function_exported?(Markdown, :render, 2)
+  defp markdown? do
+    Code.ensure_loaded?(Markdown) and function_exported?(Markdown, :render, 2)
+  end
 end
 
 defmodule BencheeDsl.SmartCell do

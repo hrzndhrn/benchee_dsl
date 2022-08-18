@@ -1,12 +1,9 @@
 # BencheeDsl - A DSL for Benchee
 
 ```elixir
-Mix.install(
-  [
-    {:benchee_dsl, path: "Projects/hrzndhrn/benchee_dsl"}
-  ],
-  force: true
-)
+Mix.install([
+  {:benchee_dsl, "~> 0.5"}
+])
 ```
 
 ## Usage
