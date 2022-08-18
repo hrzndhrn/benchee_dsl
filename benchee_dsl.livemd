@@ -92,7 +92,7 @@ You can measure one of these metrics, or all at the same time. The choice is up 
 By default only execution time is measured, memory and reductions need to be opted in by specifying a non 0 time amount.
 
 ```elixir
-Benchmark.Two.run(memory_time: 0.2, reduction_time: 0.2, time: 0.2, return: :result)
+Benchmark.Two.run(memory_time: 2, reduction_time: 2)
 ```
 
 <!-- livebook:{"branch_parent_index":0} -->
