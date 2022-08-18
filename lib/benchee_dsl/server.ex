@@ -24,6 +24,10 @@ defmodule BencheeDsl.Server do
           on_exit(module)
           [result | acc]
 
+        :ok ->
+          on_exit(module)
+          acc
+
         :error ->
           acc
       end
