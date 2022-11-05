@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 - 2022/11/05
+
++ Fix `example_bench.exs`.
+
 ## 0.5.1 - 2022/08/18
 
 + Ensure `Benchee.Formaters.Markdown` is loaded when available.
