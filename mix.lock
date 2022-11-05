@@ -1,5 +1,4 @@
 %{
-  "beam_file": {:hex, :beam_file, "0.3.3", "5c603683bdd4c964ce6c5f61b1042cf450bd50b16055ea054e7049a9cedd3663", [:mix], [], "hexpm", "cce43810eefafb79b0dcf1b783e718e8dd7441d70028fcd47ad5246e2a261a9e"},
   "benchee": {:hex, :benchee, "1.1.0", "f3a43817209a92a1fade36ef36b86e1052627fd8934a8b937ac9ab3a76c43062", [:mix], [{:deep_merge, "~> 1.0", [hex: :deep_merge, repo: "hexpm", optional: false]}, {:statistex, "~> 1.0", [hex: :statistex, repo: "hexpm", optional: false]}], "hexpm", "7da57d545003165a012b587077f6ba90b89210fd88074ce3c60ce239eb5e6d93"},
   "benchee_markdown": {:hex, :benchee_markdown, "0.3.0", "cd0243547228f29be3acefe112ddbc364cccbf6010de3d64479ad2f3017dcf05", [:mix], [{:benchee, ">= 1.1.0 and < 2.0.0", [hex: :benchee, repo: "hexpm", optional: false]}], "hexpm", "497a234797176231d3a9e352a7588e26ecdaac559684ef11928025ef4e7ee42b"},
   "bunt": {:hex, :bunt, "0.2.1", "e2d4792f7bc0ced7583ab54922808919518d0e57ee162901a16a1b6664ef3b14", [:mix], [], "hexpm", "a330bfb4245239787b15005e66ae6845c9cd524a288f0d141c148b02603777a5"},
