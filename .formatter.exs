@@ -12,6 +12,7 @@ locals_without_parens = [
   inputs: 1,
   job: 1,
   job: 2,
+  job: 3,
   jobs: 1
 ]
 

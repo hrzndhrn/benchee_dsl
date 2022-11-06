@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.5.2 - 2022/11/05
+## 0.5.2 - 2022/11/06
 
++ Extend `.formatter.exs`.
 + Fix `example_bench.exs`.
 
 ## 0.5.1 - 2022/08/18
