@@ -103,7 +103,8 @@ defmodule BencheeDsl.Runner do
   defp same_formatter(a, b), do: a == b
 
   defp benchmark(config, module) do
-    Keyword.put(config, :title, get_attr(module, :title))
+    title = get_attr(module, :title)
+    config = if title != nil, do: Keyword.put(config, :title, title), else: config
 
     Benchmark.new(
       dir: get_attr(module, :__dir__),

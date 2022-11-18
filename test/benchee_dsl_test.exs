@@ -126,7 +126,7 @@ defmodule BencheeDslTest do
       assert is_function(flat_map, 0)
       assert is_function(map_flatten, 0)
 
-      assert Keyword.equal?(config, [{:formatters, [Benchee.Formatters.Console]}, time: 3])
+      assert Keyword.equal?(config, time: 3, title: "title", formatters: [Benchee.Formatters.Console])
 
       benchee_run(jobs, config)
     end)
@@ -144,7 +144,7 @@ defmodule BencheeDslTest do
                  description: description
                } = benchmark
 
-        assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console])
+        assert Keyword.equal?(config, title: "title", formatters: [Benchee.Formatters.Console])
         assert module == AttrBench
         assert String.ends_with?(dir, "benchee_dsl/test/fixtures")
         assert description == "description"
