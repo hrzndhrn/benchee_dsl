@@ -126,7 +126,11 @@ defmodule BencheeDslTest do
       assert is_function(flat_map, 0)
       assert is_function(map_flatten, 0)
 
-      assert Keyword.equal?(config, time: 3, title: "title", formatters: [Benchee.Formatters.Console])
+      assert Keyword.equal?(config,
+               time: 3,
+               title: "title",
+               formatters: [Benchee.Formatters.Console]
+             )
 
       benchee_run(jobs, config)
     end)
