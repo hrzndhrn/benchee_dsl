@@ -8,11 +8,10 @@ defmodule BencheeDsl.Benchmark do
   alias BencheeDsl.Server
 
   @keys [
-    :config,
-    :description,
     :dir,
     :module,
-    :title
+    :config,
+    :description
   ]
 
   @type key ::
@@ -20,14 +19,12 @@ defmodule BencheeDsl.Benchmark do
           | :description
           | :dir
           | :module
-          | :title
 
   @type t :: %__MODULE__{
-          config: keyword(),
-          description: String.t(),
           dir: String.t(),
           module: module(),
-          title: String.t()
+          config: keyword(),
+          description: String.t()
         }
 
   defstruct @keys

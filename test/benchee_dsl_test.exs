@@ -8,7 +8,7 @@ defmodule BencheeDslTest do
 
   alias BencheeDsl.BencheeMock
 
-  @benchee_run Application.get_env(:benchee_dsl, :benchee_run)
+  @benchee_run Application.compile_env(:benchee_dsl, :benchee_run)
 
   setup :verify_on_exit!
 
@@ -135,20 +135,18 @@ defmodule BencheeDslTest do
       file: "test/fixtures/attr_bench.exs",
       before_each_benchmark: fn benchmark ->
         assert benchmark |> Map.keys() |> Enum.sort() ==
-                 [:__struct__, :config, :description, :dir, :module, :title]
+                 [:__struct__, :config, :description, :dir, :module]
 
         assert %{
                  config: config,
                  module: module,
                  dir: dir,
-                 title: title,
                  description: description
                } = benchmark
 
         assert Keyword.equal?(config, formatters: [Benchee.Formatters.Console])
         assert module == AttrBench
         assert String.ends_with?(dir, "benchee_dsl/test/fixtures")
-        assert title == "title"
         assert description == "description"
 
         Map.update!(benchmark, :config, fn config -> Keyword.put(config, :time, 3) end)

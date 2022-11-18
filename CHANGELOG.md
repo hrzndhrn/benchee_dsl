@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 - 2022/11/18
+
++ Update benchmark struct.
+
 ## 0.5.2 - 2022/11/06
 
 + Extend `.formatter.exs`.
