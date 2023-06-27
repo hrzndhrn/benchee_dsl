@@ -12,7 +12,7 @@ defmodule BencheeDsl.Livebook do
 
   def render(suite) do
     case markdown?() do
-      true -> Markdown |> apply(:render, [suite, [livebook: true]]) |> Kino.Markdown.new()
+      true -> suite |> Markdown.render(livebook: true) |> Kino.Markdown.new()
       false -> :ok
     end
   end
