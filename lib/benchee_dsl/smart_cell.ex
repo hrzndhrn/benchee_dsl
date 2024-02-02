@@ -3,22 +3,17 @@ defmodule BencheeDsl.Livebook do
 
   alias Benchee.Formatters.Markdown
 
-  def benchee_config do
-    case markdown?() do
-      true -> [return: :result, formatters: []]
-      false -> []
-    end
-  end
+  case Code.ensure_compiled(Markdown) do
+    {:module, _module} ->
+      def render(suite) do
+        suite |> Markdown.render(livebook: true) |> Kino.Markdown.new()
+      end
 
-  def render(suite) do
-    case markdown?() do
-      true -> suite |> Markdown.render(livebook: true) |> Kino.Markdown.new()
-      false -> :ok
-    end
-  end
+      def benchee_config, do: [return: :result, formatters: []]
 
-  defp markdown? do
-    Code.ensure_loaded?(Markdown) and function_exported?(Markdown, :render, 2)
+    {:error, _} ->
+      def render(_suite), do: :ok
+      def benchee_config, do: []
   end
 end
 
