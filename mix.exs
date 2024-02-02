@@ -68,16 +68,10 @@ defmodule BencheeDsl.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.14", only: :test, runtime: false},
-      {:mox, "~> 1.0", only: :test}
-    ] ++ recode()
-  end
-
-  defp recode() do
-    case Version.match?(System.version(), "~> 1.12") do
-      true -> [{:recode, "~> 0.1", only: [:dev, :test]}]
-      false -> []
-    end
+      {:excoveralls, "~> 0.14", only: [:dev, :test], runtime: false},
+      {:mox, "~> 1.0", only: :test},
+      {:recode, "~> 0.1", only: [:dev, :test]}
+    ]
   end
 
   defp aliases do
