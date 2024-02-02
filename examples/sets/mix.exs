@@ -19,7 +19,6 @@ defmodule Sets.MixProject do
 
   defp deps do
     [
-      {:benchee, "~> 1.0", only: :dev},
       {:benchee_dsl, path: "../..", only: :dev}
     ]
   end

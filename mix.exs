@@ -61,7 +61,7 @@ defmodule BencheeDsl.MixProject do
 
   defp deps do
     [
-      {:benchee, ">= 0.99.0 and < 2.0.0"},
+      {:benchee, "~> 1.0"},
       {:kino, "~> 0.6"},
       # dev/test
       {:benchee_markdown, "~> 0.3", only: [:dev, :test]},
